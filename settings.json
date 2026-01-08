@@ -11,10 +11,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:docs.unity3d.com)",
       "WebFetch(domain:forum.unity.com)",
-      "mcp__gitmcp-UnityCsReference",
-      "mcp__gitmcp-uGUI",
-      "mcp__gitmcp-NewInputSystem",
-      "mcp__UnityNaturalMCP",
+      "WebFetch(domain:discussions.unity.com)",
+      "mcp__unity-natural-mcp",
       "mcp__jetbrains",
       "mcp__ide__getDiagnostics"
     ],
@@ -50,9 +48,6 @@
     "defaultMode": "plan"
   },
   "enabledMcpjsonServers": [
-    "gitmcp-UnityCsReference",
-    "gitmcp-uGUI",
-    "gitmcp-NewInputSystem",
     "UnityNaturalMCP",
     "jetbrains"
   ],

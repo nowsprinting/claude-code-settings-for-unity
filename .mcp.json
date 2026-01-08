@@ -1,17 +1,5 @@
 {
   "mcpServers": {
-    "gitmcp-UnityCsReference": {
-      "type": "http",
-      "url": "https://gitmcp.io/Unity-Technologies/UnityCsReference"
-    },
-    "gitmcp-uGUI": {
-      "type": "http",
-      "url": "https://gitmcp.io/Unity-Technologies/uGUI"
-    },
-    "gitmcp-NewInputSystem": {
-      "type": "http",
-      "url": "https://gitmcp.io/Unity-Technologies/InputSystem"
-    },
     "UnityNaturalMCP": {
       "type": "http",
       "url": "http://localhost:56780/mcp"
