@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.cs"
+---
+
 # Coding Guidelines
 
 ## Basic Principles

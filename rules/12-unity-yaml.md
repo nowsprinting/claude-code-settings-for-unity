@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.{meta,asset,prefab,unity}"
+---
+
 # Editing the Unity YAML file
 
 Generally, files with the extensions .meta, .asset, .prefab, and .unity are operated in the Unity Editor via MCP.

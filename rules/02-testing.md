@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/Tests/**/*.cs"
+---
+
 # Testing Guidelines
 
 ## Basic Principles

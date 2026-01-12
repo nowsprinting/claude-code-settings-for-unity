@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.cs"
+---
+
 # Project Structure
 
 This project uses Unity. It follows the general Unity project structure and has the following directory structure:

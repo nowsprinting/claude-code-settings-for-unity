@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.cs"
+---
+
 # Refer to the Official Documentation
 
 ## Unity Documentation
