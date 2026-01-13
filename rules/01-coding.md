@@ -96,6 +96,8 @@ paths:
 - Create sub-namespaces as well. Use the dot(.) operator to delimit the name levels, allowing you to organize your
   scripts into hierarchical categories. For example, you can create "MyApplication.GameFlow," "MyApplication.AI," "
   MyApplication.UI," and so on, to hold different logical components of your game.
+- Align namespace with directory structure: The namespace should match the directory path relative to the Scripts folder.
+  For example, a file at `Assets/OurGame/Scripts/Runtime/Foo/Bar.cs` should use the namespace `Foo.Bar`.
 
 ## Design
 
