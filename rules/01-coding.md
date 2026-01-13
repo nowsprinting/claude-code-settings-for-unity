@@ -47,6 +47,13 @@ paths:
     public int SerializedProperty { get; set; } = defaultValue;
     ```
   This pattern applies the SerializeField attribute to the backing field while keeping the property public.
+- When applying Unity attributes to auto-implemented properties, always use the `field:` target to apply the attribute to the backing field. This applies to all serialization-related attributes (e.g., `HideInInspector`, `Range`, `Tooltip`, `Header`, etc.):
+    ```csharp
+    [field: SerializeField]
+    [field: HideInInspector]
+    [field: Range(0, 100)]
+    public int Health { get; set; }
+    ```
 - Place property documentation comments above the property, not above the attribute.
 
 ### Enums
