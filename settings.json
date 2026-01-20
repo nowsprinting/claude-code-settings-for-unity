@@ -27,7 +27,8 @@
       "WebFetch(domain:support.unity.com)",
       "WebFetch(domain:unity.com)",
       "WebFetch(domain:game.ci)",
-      "mcp__UnityNaturalMCP",
+      "Skill(run-tests)",
+      "mcp__unity-natural-mcp",
       "mcp__jetbrains",
       "mcp__ide__getDiagnostics"
     ],
@@ -65,7 +66,7 @@
     "additionalDirectories": []
   },
   "enabledMcpjsonServers": [
-    "UnityNaturalMCP",
+    "unity-natural-mcp",
     "jetbrains"
   ],
   "enabledPlugins": {

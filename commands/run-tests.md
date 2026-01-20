@@ -1,9 +1,9 @@
-Please run the tests on Unity editor via `UnityNaturalMCP`.
+Please run the tests on Unity editor with `mcp__unity-natural-mcp`.
 
 ## Choose the right tool
 
-Use the `mcp__UnityNaturalMCP__RunEditModeTests` tool if the modified class namespace or assembly name contains "Editor".
-Use the `mcp__UnityNaturalMCP__RunPlayModeTests` tool if the modified class namespace does not contain "Editor".
+Use the `mcp__unity-natural-mcp__run_edit_mode_tests` tool if the modified class namespace or assembly name contains "Editor".
+Use the `mcp__unity-natural-mcp__run_play_mode_tests` tool if the modified class namespace does not contain "Editor".
 
 ## Specify filters
 

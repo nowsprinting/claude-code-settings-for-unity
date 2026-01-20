@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "UnityNaturalMCP": {
+    "unity-natural-mcp": {
       "type": "http",
       "url": "http://localhost:56780/mcp"
     },
