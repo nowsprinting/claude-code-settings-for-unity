@@ -8,7 +8,13 @@ paths:
 ## Unity Documentation
 
 When using the Unity Engine and Editor APIs, check the facts by referring to the official documentation below.
-Note that "6000.0" in the URL is the Unity version. To reference the documentation for the same version as this project, replace it with the version in the ./ProjectSettings/ProjectVersion.txt file.
+Note that "6000.0" in the path/ URL is the Unity version. To reference the documentation for the same version as this project, replace it with the version in the ./ProjectSettings/ProjectVersion.txt file.
+
+Local documents that exist if previously downloaded:
+
+- /Applications/Unity/Hub/Editor/6000.3.7f1/Documentation/ # 
+
+On the Web:
 
 - https://docs.unity3d.com/6000.0/Documentation/Manual/UnityManual.html
 - https://docs.unity3d.com/6000.0/Documentation/ScriptReference/index.html

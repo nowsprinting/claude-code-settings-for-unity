@@ -20,7 +20,7 @@ paths:
 - テスト対象が Editor/ ディレクトリ下にある場合（エディタ拡張の場合）、テストコードは `Tests/Editor/` 下に置く（Edit Mode tests）
 - テスト対象が Runtime/ ディレクトリ下にある場合、テストコードは `Tests/Runtime/` 下に置く（Play Mode tests）
 - テスト対象クラスと対となるディレクトリ構造およびテストクラスを作成する
-- テストコード内で使用するTest double (Stub, Spy, Dummy, Fake, Mock) クラスを作る場合は、`Tests/Editor/TestDoubles/` もしくは `Tests/Runtime/TestDoubles/` ディレクトリに置く
+- テストコード内で使用するTest double (Stub, Spy, Mock, Fake, Dummy) クラスを作る場合は、`Tests/Runtime/TestDoubles/` ディレクトリに置く
 - テストコード内で使用するSceneファイルを作る場合は、`Tests/Scenes/` ディレクトリに置く
 
 ## Naming
@@ -30,7 +30,7 @@ paths:
 - テストクラス名は テスト対象クラス名 + "Test" とする。e.g., `public class CharacterControllerTest`
 - テストメソッド名は「テスト対象メソッド名」「条件」「期待される結果」をアンダースコアで連結した形式を使用する。e.g., `public void TakeDamage_WhenHealthIsZero_CharacterDies()`
 - テスト対象オブジェクトには`sut`、実測値には`actual`、期待値には`expected`と命名し、役割を明示すること
-- テストダブルを使用する場合、xUnit Test Patterns (xUTP) の定義に従って `stub`, `spy`, `dummy`, `fake`, `mock` のいずれかの接頭辞を使用すること
+- テストダブルを使用する場合、xUnit Test Patterns (xUTP) の定義に従って `stub`, `spy`, `mock`, `fake`, `dummy` のいずれかの接頭辞を使用すること
 
 ## Design
 

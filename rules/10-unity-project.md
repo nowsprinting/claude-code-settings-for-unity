@@ -9,7 +9,7 @@ This project uses Unity. It follows the general Unity project structure and has 
 
 - PROJECT-ROOT/
   - Assets/ # Development project code and assets
-  - Documentation/ # Developer documentation
+  - Docs/ # Developer documentation
   - Library/
     - PackageCache/ # Caching dependent UPM packages
   - Packages/ # Embedded packages
