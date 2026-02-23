@@ -46,7 +46,6 @@
       "WebFetch(domain:modelcontextprotocol.info)",
       "WebFetch(domain:medium.com)",
       "Skill(run-tests)",
-      "mcp__unity-natural-mcp",
       "mcp__jetbrains"
     ],
     "deny": [
@@ -83,7 +82,6 @@
     "additionalDirectories": []
   },
   "enabledMcpjsonServers": [
-    "unity-natural-mcp",
     "jetbrains"
   ],
   "enabledPlugins": {
