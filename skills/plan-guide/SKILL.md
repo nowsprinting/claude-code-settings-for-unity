@@ -91,7 +91,7 @@ Create only the types and public method signatures for the product code that can
 
 1. Implement the product code.
 2. If the test cases require test doubles, create them as separate files under `./Tests/Runtime/TestDoubles/` (Even if you are testing in Edit Mode, place it under Runtime). Do NOT define test doubles in the test class file.
-3. Resolve diagnostics at the `error` severity level, using the `mcp__jetbrains__get_file_problems` tools.
+3. Resolve diagnostics at the `error` severity level, using the `get_file_problems` tools.
 4. Run the tests using `/run-tests` command, and confirm that they all **pass**.
 5. Commit to git.
 
@@ -99,5 +99,5 @@ Create only the types and public method signatures for the product code that can
 
 1. Refactor with DRY, KISS, and SOLID principles in mind, re-run tests using `/run-tests` command to pass.
 2. Resolve diagnostics at the `suggestion` or higher severity level, re-run tests using `/run-tests` command to pass.
-3. Reformat the modified files, using `mcp__jetbrains__reformat_file` tool.
+3. Reformat the modified files, using `reformat_file` tool.
 4. Commit to git.
