@@ -1,5 +1,5 @@
 ---
-name: plan-guide
+name: implementation-planning-guide
 description: Used when planning implementation in Plan mode. Include the test design and implementation steps in the plan file.
 ---
 
