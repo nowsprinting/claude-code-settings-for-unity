@@ -76,14 +76,15 @@
       "Read(!./Library/PackageCache/**)",
       "Edit(**/packages-lock.json)",
       "Write(.env*)",
-      "Write(**/secrets/**)"
+      "Write(**/secrets/**)",
+      "mcp__jetbrains__build_project",
+      "mcp__jetbrains__get_run_configurations",
+      "mcp__jetbrains__execute_run_configuration",
+      "mcp__jetbrains__execute_terminal_command"
     ],
     "defaultMode": "plan",
     "additionalDirectories": []
   },
-  "enabledMcpjsonServers": [
-    "jetbrains"
-  ],
   "enabledPlugins": {
     "csharp-lsp@claude-plugins-official": true
   }
