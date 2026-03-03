@@ -1,6 +1,11 @@
 ---
 name: code-writing-guide
-description: Used when writing or modifying code. Provides coding guidelines for this project.
+description: >-
+  Provides project-specific coding guidelines for this project.
+  Make sure to use this skill whenever writing, creating, editing, or modifying
+  code files. This includes implementing new features, fixing bugs, refactoring,
+  adding tests, or any task that results in code changes. Even for small edits
+  or one-line fixes, load this skill to ensure project conventions are followed.
 ---
 
 Guide for writing code in this project.

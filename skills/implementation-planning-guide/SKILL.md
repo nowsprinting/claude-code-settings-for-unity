@@ -1,6 +1,12 @@
 ---
 name: implementation-planning-guide
-description: Used when planning implementation in Plan mode. Include the test design and implementation steps in the plan file.
+description: >-
+  Provides test design guidelines and steps for a test-first development workflow.
+  Make sure to use this skill whenever plan mode is active and the task involves
+  implementing, adding, or modifying code. This includes feature implementation,
+  bug fixes, refactoring, and any task that will result in code changes. Even if
+  the user only says "plan this" or "how should we implement this", load this skill
+  to ensure test design is included in the plan.
 ---
 
 Guide for plan mode. This skill provides the test design guidelines and the development workflow steps to include in plan files.

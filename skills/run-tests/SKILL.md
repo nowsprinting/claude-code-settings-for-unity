@@ -1,6 +1,12 @@
 ---
 name: run-tests
-description: Run tests on Unity editor using the run_unity_tests tool.
+description: >-
+  Provides guidelines for running Unity tests using the run_unity_tests tool.
+  Make sure to use this skill whenever running, executing, or re-running tests
+  on Unity Editor. This includes verifying implementations, debugging test
+  failures, running specific test assemblies, or any task that involves the
+  run_unity_tests tool. Even if the user just says "run the tests" or "check
+  if it passes", use this skill.
 ---
 
 Please run the tests on Unity editor with `run_unity_tests` tool.
