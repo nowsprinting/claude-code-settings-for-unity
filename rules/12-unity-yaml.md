@@ -12,10 +12,12 @@ Please read the following page before editing a file.
 
 ## .meta file
 
+- Do NOT create a .meta file, as it will be created by the Unity editor.
 - https://docs.unity3d.com/Manual/AssetMetadata.html
 
-## .asset, .prefab, .unity file
+## .asset, .prefab, and .unity file
 
+- Do NOT directly edit the .unity and .prefab files. Instead, create and run an editor script under ./Assets/Editor/.
 - https://docs.unity3d.com/Manual/FormatDescription.html
 - https://docs.unity3d.com/Manual/UnityYAML.html
 - https://docs.unity3d.com/Manual/YAMLFileFormat.html
