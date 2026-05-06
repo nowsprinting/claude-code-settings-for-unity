@@ -2,16 +2,21 @@
 name: run-tests
 description: >-
   Provides guidelines for running Unity tests using the run_unity_tests tool.
-  Make sure to use this skill whenever running, executing, or re-running tests
-  on Unity Editor. This includes verifying implementations, debugging test
-  failures, running specific test assemblies, or any task that involves the
-  run_unity_tests tool. Even if the user just says "run the tests" or "check
-  if it passes", use this skill.
+  Make sure to use this skill whenever running, executing, or re-running tests on the Unity editor.
+  This includes verifying implementations, debugging test failures, running specific test assemblies, or any task that involves the run_unity_tests tool.
+  Even if the user just says "run the tests" or "check if it passes", use this skill.
 ---
 
 ## Run Tests
 
-Use the `run_unity_tests` tool to run the tests on the Unity editor.
+Before running tests, complete the following steps in order:
+
+1. If the editor is in Play Mode, stop it using the `unity_play_control` tool.
+2. If any code was modified, confirm compilation success using the `get_unity_compilation_result` tool before proceeding.
+
+Then use the `run_unity_tests` tool to run the tests on the Unity editor.
+
+Test execution can take several minutes. Do not re-run while a test is in progress — always wait for it to complete or time out. If a timeout occurs, narrow down the tests using filter settings and re-run.
 
 ## Rules for Test Failures
 
@@ -25,8 +30,8 @@ When consulting, clarify:
 
 ## Troubleshooting
 
-When a tool fails with a connection error, it may be due to the following reasons:
+Read the appropriate resource file based on the situation:
 
-- The connection may have been disconnected due to domain reloading caused by compilation, etc. Wait a moment and try again.
-- Play Mode tests cannot be run if there are any compilation errors. Check for any compilation errors using the `get_unity_compilation_result` and `get_file_problems` tool.
-- The test may be timing out due to a long execution time. Review the filter settings to narrow down the tests to be executed, or ask the user to extend the timeout setting.
+- Any Unity MCP tool (`run_unity_tests`, `unity_play_control`, `get_unity_compilation_result`) is not available or fails with a connection error: Read `.claude/skills/run-tests/resources/troubleshooting-run-unity-tests.md`
+- A test fails due to an assertion, constraint, or comparer in the `TestHelper` namespace (excluding `TestHelper.UI`): Read `.claude/skills/run-tests/resources/troubleshooting-test-helper.md`
+- A test fails due to an exception thrown from the `TestHelper.UI` namespace: Read `.claude/skills/run-tests/resources/troubleshooting-test-helper-ui.md`
