@@ -1,13 +1,13 @@
 ---
 name: code-writing-guide
 description: >-
-  Provides project-specific coding guidelines for this project.
+  Provides coding guidelines for Unity projects.
   Make sure to use this skill whenever writing, creating, editing, or modifying code files.
   This includes implementing new features, fixing bugs, refactoring, adding tests, or any task that results in code changes.
   Even for small edits or one-line fixes, load this skill to ensure project conventions are followed.
 ---
 
-Guide for writing code in this project.
+Guide for writing code in Unity projects.
 
 ## Rules
 

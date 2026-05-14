@@ -4,7 +4,7 @@ Reference for creating uGUI components that match the Unity editor's **GameObjec
 
 ## Principles
 
-- Use **legacy UI components** (`UnityEngine.UI.Text`, `UnityEngine.UI.Button`, etc.). Do not use TextMeshPro unless the user explicitly requests it.
+- For **Button** and **Text**: use the legacy variants (`UnityEngine.UI.Button` / `UnityEngine.UI.Text`) by default. Switch to TextMesh Pro (`TMPro.TextMeshProUGUI` etc.) only when the user explicitly requests it.
 - Use `ObjectFactory.CreateGameObject` / `ObjectFactory.AddComponent` (editor-only) instead of `new GameObject(...)` / `gameObject.AddComponent<T>()` so that Undo history and user Presets are applied automatically.
 - `DefaultControls.Create*` methods are the public API equivalent of the context menu — use them for all standard controls.
 
@@ -68,9 +68,18 @@ Only the color block values are set; `transition` stays at its component default
 
 ### Font
 
+If the user has specified a project font (e.g. in CLAUDE.md, a task description, or earlier in the conversation), assign it to every `Text` component you create.
+If no font is specified, ask the user with `AskUserQuestion` before proceeding.
+Only fall back to the built-in font when the user explicitly says no custom font is needed.
+
 ```csharp
-// Unity 6.x — do NOT use "Arial.ttf" (pre-Unity 6 name)
-Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+// Load in editor scripts:
+var font = AssetDatabase.LoadAssetAtPath<Font>("Assets/DtD/Resources/Fonts/NotoSansJP-Regular.otf");
+// Load in runtime scripts:
+var font = Resources.Load<Font>("Fonts/NotoSansJP-Regular");
+
+// Built-in fallback (Unity 6.x) — only when no project font is specified:
+// Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 ```
 
 ### FontData defaults (from `FontData.defaultFontData`)
@@ -126,6 +135,16 @@ canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 // They keep their component Reset() defaults:
 //   CanvasScaler: uiScaleMode = ConstantPixelSize, scaleFactor = 1, referencePixelsPerUnit = 100
 //   GraphicRaycaster: all defaults
+```
+
+**CanvasScaler: prefer `ScaleWithScreenSize`**: The Reset default (`ConstantPixelSize`) does not resize the UI when the screen resolution changes. Use `ScaleWithScreenSize` for all game scenes — this keeps the UI proportional at any resolution and ensures `EventSystem.RaycastAll` can reach elements regardless of the GameView size (e.g., CI caps the GameView at 640×480):
+
+```csharp
+var scaler = canvasGo.GetComponent<CanvasScaler>();
+scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+scaler.referenceResolution = new Vector2(800, 600);  // when the game targets a fixed output resolution, use that size here
+scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+scaler.matchWidthOrHeight = 0f;  // 0 = match width
 ```
 
 Also create an EventSystem if none exists in the current stage (see EventSystem section).

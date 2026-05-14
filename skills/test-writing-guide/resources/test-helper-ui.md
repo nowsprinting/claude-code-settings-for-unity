@@ -28,6 +28,16 @@ Result: use `.GameObject` on the returned value.
 
 **Built-in paginators**: `UguiScrollbarPaginator(scrollbar)`, `UguiScrollRectPaginator(scrollRect)`
 
+**ScrollRect navigation**: pass a paginator when the target is inside a `ScrollRect`; the finder scrolls to reveal the target before the reachability check.
+
+```csharp
+var scrollViewGo = await finder.FindByNameAsync("ScrollView");
+var paginator = new UguiScrollRectPaginator(scrollViewGo.GameObject.GetComponent<ScrollRect>());
+var item = await finder.FindByNameAsync("ItemName", interactable: true, paginator: paginator);
+```
+
+`UguiScrollRectPaginator.ResetAsync` resets the scroll position to the top-left before searching so the scan always starts from the beginning.
+
 ---
 
 ## Operate a GameObject

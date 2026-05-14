@@ -1,13 +1,13 @@
 ---
 name: test-writing-guide
 description: >-
-  Provides project-specific guidelines for writing test code in this project.
+  Provides guidelines for writing test code for Unity projects.
   Make sure to use this skill whenever writing, creating, editing, or modifying test code files (files under Tests/).
   This includes implementing new tests, fixing test failures, adding test cases, or any task that results in test code changes.
   Even for small edits or one-line fixes, load this skill to ensure test conventions are followed.
 ---
 
-Guide for writing test code in this project.
+Guide for writing test code for Unity projects.
 
 ## Rules
 

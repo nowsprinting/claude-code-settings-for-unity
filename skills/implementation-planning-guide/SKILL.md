@@ -1,83 +1,116 @@
 ---
 name: implementation-planning-guide
 description: >-
-  Provides test design guidelines and steps for a test-first development workflow.
-  Make sure to use this skill whenever plan mode is active and the task involves
-  implementing, adding, or modifying code. This includes feature implementation,
-  bug fixes, refactoring, and any task that will result in code changes. Even if
-  the user only says "plan this" or "how should we implement this", load this skill
-  to ensure test design is included in the plan.
+  Orchestrates the test-first implementation planning workflow. Use this skill
+  whenever plan mode is active and the task involves implementing, adding, or
+  modifying code. This includes feature implementation, bug fixes, refactoring,
+  and any task that will result in code changes. Even if the user only says
+  "plan this" or "how should we implement this", load this skill to ensure the
+  full test-first planning workflow is followed.
 ---
 
-Guide for plan mode. This skill provides the test design guidelines and the development workflow steps to include in plan files.
+Guide for plan mode. This skill defines the orchestration workflow for test-first implementation planning.
 
-## Test Design Guidelines
+## Plan Mode Workflow
 
-In plan mode, design your tests according to the following guidelines and include test cases in the plan file:
+### Phase 1: Initial Understanding
 
-### 1. Analyze specifications
+Launch Explore agents to understand the codebase relevant to the task.
 
-Read the current plan and identify testable specifications.
-If the specifications are unclear, use the AskUserQuestionTool to request clarification before proceeding.
-If the test target has low testability, modify the design.
+**TBD items:** If the requirements or specifications explicitly contain the text "TBD" for any item, treat that item as non-existent — do not design or implement it. Only ask the user via `AskUserQuestion` if the TBD item is a prerequisite that cannot be deferred without blocking the overall design.
 
-### 2. Identify Test Targets
+### Phase 2: Implementation Design (Plan Agent)
 
-Choose public classes and methods under test in order of the **least integrated level** (unit tests first).
+Launch a Plan agent to design the class/method structure. Include the following instruction in the Plan agent prompt:
 
-### 3. Select Testing Techniques
+> Design the class/method seams with **testability** in mind:
+> - Prefer small, focused public interfaces
+> - Inject dependencies via interfaces so they can be replaced with test doubles
+> - Avoid hidden static/global state and `new` calls inside constructors for external dependencies
+>
+> **Naming:** If any class or public method name explicitly specified by the user is a poor fit for what the spec describes, propose a more appropriate alternative using `AskUserQuestion` before finalizing the design. Accept the user's final choice without further challenge.
+>
+> **TBD items:** Any item explicitly marked "TBD" in the requirements or spec must be excluded from the design. Skip it silently unless it is structurally required to complete the design (in which case, ask via `AskUserQuestion`).
 
-For each test target, select appropriate techniques:
+The Plan agent output should include **only**:
+- Class names and responsibilities
+- Public method signatures
+- Dependency interfaces (if any)
+- Brief rationale for design decisions
 
-- **Equivalence partitioning** — group inputs into valid/invalid classes; one representative per class
-- **Boundary value analysis** — test at the edges of each equivalence class.
-- **State transition testing** — if the target has a finite-state-machine (FSM); one test case covers only 0-switch coverage
-- **Decision table testing** — if multiple conditions combine to produce different outcomes
+**Do NOT include** test cases, manual tests, or any test design — those are the sole responsibility of the `test-designer` agent in Phase 2.5.
 
-### 4. Create Test Cases
+### Phase 2.5: Test Case Design (test-designer Agent)
 
-For each technique, derive coverage-aware test cases:
+After Phase 2, launch the `test-designer` agent using the following prompt structure:
 
-- Use the naming convention: `MethodName_Condition_ExpectedResult`
-- Do NOT create sequential IDs in test case names
-- Describe the verification content clearly
-  - Verify one condition per test
-  - Test concerns separately
-- Unity Test Framework (equivalent to NUnit v3.5) allows you to write parameterized tests using the `TestCase` attribute, `Values` attribute, etc. When writing parameterized tests, test methods should be partitioned at the same granularity as **Equivalence partitions**.
-- If a test case requires a test double, state it in the Description column: e.g., `(uses spy: <TargetDependency>)`. Choose the type based on xUnit Test Patterns (xUTP) definitions:
-  - **Stub** — returns canned responses to isolate the SUT from a dependency
-  - **Spy** — records interactions (calls, arguments) for later verification
-  - **Fake** — a simplified but working implementation of a dependency
-- Drop test cases that cannot be verified by test code
-  - Instead, list them as manual test items in the `### Manual Tests` section of the plan file
-
-### 5. Determine Edit Mode vs. Play Mode
-
-| Condition                                      | Test Mode                                    |
-|------------------------------------------------|----------------------------------------------|
-| Tests Editor extension code (under `Editor/`)  | **Edit Mode** — place under `Tests/Editor/`  |
-| Tests Runtime code (under `Runtime/`)          | **Play Mode** — place under `Tests/Runtime/` |
-
-### 6. Test Case Format
-
-Append test cases to the plan file using this format:
-
-```markdown
-### Test Cases of {Edit|Play} Mode tests
-
-#### <ClassName>
-
-| Test Method                 | Description                                |
-|-----------------------------|--------------------------------------------|
-| `Method_Condition_Expected` | Brief description of what is verified      |
-| `Method_Condition_Expected` | Brief description (uses stub: IDependency) |
-
-### Manual Tests
-
-| # | Item                          | Verification Method               |
-|---|-------------------------------|-----------------------------------|
-| 1 | Brief description of the item | How to verify (e.g., visual check)|
 ```
+## Requirements
+[feature requirements]
+
+## Task Type
+[feature | bug-fix]
+
+## Implementation Design
+[class names, public method signatures, dependency interfaces, and design rationale from the Phase 2 Plan agent]
+
+## Existing Code Context
+[relevant existing code structure from Phase 1 Explore]
+```
+
+**Rules for assembling the prompt:**
+- Set `Task Type` to `bug-fix` when fixing a bug; omit or set to `feature` otherwise.
+- Under `Implementation Design`, include only the design output — **do NOT include any test cases or manual tests** the Plan agent may have produced. Test design is the `test-designer` agent's sole responsibility.
+- **Do NOT add output format specifications.** The `test-designer` agent's output format is self-contained; caller-supplied format overrides produce non-standard output.
+
+The `test-designer` agent returns:
+- Formatted Test Cases table (ready to paste into the plan file)
+- Manual Tests list
+- **Testability Assessment** (`TESTABILITY: PASS`, `WARN`, or `FAIL`)
+
+#### Handling the Testability Assessment
+
+| Result              | Action                                                                                          |
+|---------------------|-------------------------------------------------------------------------------------------------|
+| `TESTABILITY: PASS` | Proceed to Phase 3 (Review)                                                                     |
+| `TESTABILITY: WARN` | Proceed to Phase 3; record the Testability Issues in the plan file's "Known Trade-offs" section |
+| `TESTABILITY: FAIL` | Loop back to Phase 2 (see below); maximum **1 retry**                                           |
+
+#### Loopback to Phase 2 (on FAIL)
+
+1. Extract the "Testability Issues" table from the `test-designer` agent output
+2. Re-launch the Plan agent with:
+   - The previous design output
+   - The Testability Issues
+   - Instruction: "Revise the design to address the Testability Issues listed below"
+3. Re-run Phase 2.5 with the revised design
+4. If still `FAIL` after one retry → **Abort** (see below)
+
+#### Abort (second consecutive FAIL)
+
+Use `AskUserQuestion` to present the user with three options:
+- Proceed with the current design despite testability concerns
+- Exit plan mode to revise the requirements
+- Provide explicit design hints and re-run Phase 2
+
+### Phase 3: Review
+
+Read the critical files identified in the plan. Verify that the Plan agent's design and the `test-designer` agent's test cases are consistent with each other and with the user's intent.
+
+### Phase 4: Write the Plan File
+
+Assemble the plan file with the following sections:
+
+1. **Context** — why this change is needed
+2. **Implementation Design** — from Phase 2 Plan agent output
+3. **Test Cases** — pasted from the `test-designer` agent output. **When transcribing, rewrite any mechanism-leaking descriptions to verification content only.** Test framework attributes (`[Test]` / `[UnityTest]` / `[LoadScene]`, etc.) and async/coroutine patterns are decided in the test-writing phase, not in the plan.
+4. **Manual Tests** — pasted verbatim from the `test-designer` agent output
+5. **Known Trade-offs** — from `TESTABILITY: WARN` issues (if any)
+6. **Development Workflow** — the steps below, copied into the plan file
+
+### Phase 5: Call ExitPlanMode
+
+---
 
 ## Development Workflow
 
@@ -89,21 +122,40 @@ Create only the types and public method signatures for the product code that can
 
 ### Step 2: Test First
 
-1. Implement test code based on the test cases in the plan file.
-2. Run the added tests using `/run-tests` command, and confirm that they **fail**.
-3. Commit to git.
+Launch a `general-purpose` subagent. The main agent itself does **NOT** load `test-writing-guide` — the subagent does.
+
+**Subagent prompt must include:**
+- Path to the plan file (so it can read the Test Cases table)
+- Whether this task is a **spec change** (and if so, the list of existing test files affected by the changed spec)
+- Whether this task is a **bug fix** (so the bug-reproducing test case from Phase 2.5 must be included)
+- Explicit instruction to load the `test-writing-guide` skill **before** writing or modifying any test code
+- The TDD red-phase expectation: tests must compile and run, but **must fail**
+
+**Subagent responsibilities:**
+1. Load the `test-writing-guide` skill
+2. Implement test code based on the test cases in the plan file
+3. If this task is a spec change, also update any existing tests that are affected by the changed spec
+4. Run the added/modified tests using the `/run-tests` command, and confirm that they **fail**
+5. Commit the test changes to git
+6. Return a concise summary: which test files were added/modified, and confirmation that they failed as expected
+
+**On subagent failure:**
+- If tests unexpectedly pass (no red phase):
+  - For a **spec change**: assess whether the reason is legitimate (e.g., the original test code was too loose or not testing the right thing). If the reason is judged valid, proceed with the commit and note the finding in the summary. If the reason is unclear, report to the main agent without committing.
+  - For **all other task types**: report to the main agent without committing — main agent decides next action.
+- If compilation fails repeatedly, the subagent should report the blocker rather than loop indefinitely
 
 ### Step 3: Implementation
 
 1. Implement the product code.
-2. If the test cases require test doubles, create them as separate files under `./Tests/Runtime/TestDoubles/` (Even if you are testing in Edit Mode, place it under Runtime). Do NOT define test doubles in the test class file.
-3. Resolve diagnostics at the `error` severity level, using the `get_file_problems` tools.
-4. Run the tests using `/run-tests` command, and confirm that they all **pass**.
-5. Commit to git.
+2. Resolve diagnostics at the `error` severity level, using the `get_file_problems` tools.
+3. Run the tests using `/run-tests` command, and confirm that they all **pass**.
+4. Commit to git.
 
 ### Step 4: Refactoring
 
-1. Refactor with DRY, KISS, and SOLID principles in mind, re-run tests using `/run-tests` command to pass.
-2. Resolve diagnostics at the `suggestion` or higher severity level, re-run tests using `/run-tests` command to pass.
-3. Reformat the modified files, using `reformat_file` tool.
-4. Commit to git.
+1. Run the `/simplify` skill on the modified files to refactor with DRY, KISS, and SOLID principles in mind.
+2. Re-run tests using `/run-tests` command to confirm they still pass.
+3. Resolve diagnostics at the `suggestion` or higher severity level, re-run tests using `/run-tests` command to pass.
+4. Reformat the modified files, using `reformat_file` tool.
+5. Commit to git.

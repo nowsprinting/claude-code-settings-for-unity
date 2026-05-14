@@ -52,7 +52,12 @@
       "WebFetch(domain:plugins.jetbrains.com)",
       "WebFetch(domain:modelcontextprotocol.info)",
       "WebFetch(domain:medium.com)",
+      "Skill(code-writing-guide)",
+      "Skill(implementation-planning-guide)",
       "Skill(run-tests)",
+      "Skill(scene-editing-guide)",
+      "Skill(test-designing-guide)",
+      "Skill(test-writing-guide)",
       "mcp__deepwiki",
       "mcp__ide__getDiagnostics",
       "mcp__jetbrains"

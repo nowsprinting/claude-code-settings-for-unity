@@ -9,10 +9,15 @@ description: >-
 
 ## Run Tests
 
+**IMPORTANT: Never call two Unity Editor tools in parallel.** `unity_play_control`, `get_unity_compilation_result`, `run_unity_tests`, and `run_method_in_unity` must be called strictly one at a time — always wait for each call to return before making the next one. Calling them concurrently causes domain-reload conflicts that result in "canceled" or "did not connect within 30 seconds" errors.
+
+**When a Unity Editor tool returns `error` or `canceled`, wait 10 seconds before retrying.** Domain reload typically takes several seconds; immediate retry hits the same in-flight reload and fails again. Do not switch tools in the meantime (e.g., calling `unity_play_control` to verify state) — that just compounds the multiplexed calls. If the same tool returns `error` or `canceled` on two consecutive attempts (with the 10-second wait between them), stop and consult the user instead of retrying further.
+
 Before running tests, complete the following steps in order:
 
 1. If the editor is in Play Mode, stop it using the `unity_play_control` tool.
 2. If any code was modified, confirm compilation success using the `get_unity_compilation_result` tool before proceeding.
+3. To determine `assemblyNames` and `testMode` for a specific test class, run `.claude/skills/run-tests/scripts/resolve-test-target.sh <test-class-cs-path>`. The script prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when running an already-known assembly.
 
 Then use the `run_unity_tests` tool to run the tests on the Unity editor.
 

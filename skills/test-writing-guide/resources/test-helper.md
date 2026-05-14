@@ -70,6 +70,39 @@ public void OneTimeSetUp() => LoadAssetAttribute.LoadAssets(this);
 
 `[FocusGameView]` or `[GameViewResolution]` is required when running in batchmode.
 
+**When to add `[FocusGameView]`**: Add it at class scope on any test class that includes UI-operation tests (using `GameObjectFinder`, click/drag operators, etc.) or screenshot-capture tests. This avoids batchmode edge cases and unintended GameView focus loss. Do not add it assembly-wide or on classes that test pure logic without UI interaction.
+
+```csharp
+[TestFixture]
+[FocusGameView]
+public class MySceneTest { ... }
+```
+
+**CI resolution**: To fix the GameView resolution in CI, pass test-helper CLI arguments in Unity's startup parameters rather than hardcoding it in test code:
+
+```
+-testHelperGameViewResolution WQVGA              # GameViewResolution enum name
+-testHelperGameViewWidth 400 -testHelperGameViewHeight 240  # or explicit pixels
+```
+
+**Image-analysis screenshot tests**: Do not override the resolution — let the test run at whatever the environment provides.
+
+```csharp
+[Test]
+[LoadScene(ScenePath)]
+[TakeScreenshot(directory: "Logs/Screenshots/MyScene")]
+public async Task MyScene_SomeState_Screenshot() { ... }
+```
+
+**Resolution as a test condition**: When the resolution itself is part of the test condition (e.g., verifying element positions at a specific viewport size), apply `[GameViewResolution]` on the test method:
+
+```csharp
+[Test]
+[LoadScene(ScenePath)]
+[GameViewResolution(960, 540, "540p")]
+public async Task MyScene_SomeLayout_At960x540_Screenshot() { ... }
+```
+
 ---
 
 ## Constraints
