@@ -6,7 +6,11 @@ Always verify facts against primary sources before implementing.
 
 ### Detected Unity Version
 
-!grep "m_EditorVersion:" ProjectSettings/ProjectVersion.txt 2>/dev/null | sed 's/m_EditorVersion: //' | grep . || echo unknown
+Run this to get the Unity version:  
+`!grep "m_EditorVersion:" ProjectSettings/ProjectVersion.txt 2>/dev/null | sed 's/m_EditorVersion: //' | grep . || echo unknown`
+
+This returns a string like `6000.3.7f1`. Call it `<FULL_VERSION>`.  
+For web URLs, truncate to `MAJOR.MINOR` (e.g., `6000.3`). Call it `<SHORT_VERSION>`.
 
 **If version detected (not "unknown"):**
 - Say: "This project is using Unity X.Y, so I'll use modern Unity APIs and C# features up to this version."
@@ -20,12 +24,10 @@ Always verify facts against primary sources before implementing.
 
 Check documentation in this order:
 
-1. **Local** – `/Applications/Unity/Hub/Editor/6000.3.7f1/Documentation/`  
-   The version in the path should match `./ProjectSettings/ProjectVersion.txt`.
+1. **Local** – `/Applications/Unity/Hub/Editor/<FULL_VERSION>/Documentation/`
 2. **Web**
-    - https://docs.unity3d.com/6000.0/Documentation/Manual/UnityManual.html
-    - https://docs.unity3d.com/6000.0/Documentation/ScriptReference/index.html  
-      (Replace `6000.0` with the version from `ProjectVersion.txt`.)
+    - `https://docs.unity3d.com/<SHORT_VERSION>/Documentation/Manual/UnityManual.html`
+    - `https://docs.unity3d.com/<SHORT_VERSION>/Documentation/ScriptReference/index.html`
 
 ### Unity C# Reference
 

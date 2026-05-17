@@ -97,9 +97,13 @@ var slice = items[1..4];
 - Record types for immutable value objects
 
 **Unity APIs:**
-- Use UI Toolkit (`UnityEngine.UIElements`) for runtime UI — runtime support is now available
+- UI Toolkit (`UnityEngine.UIElements`) is now available for runtime UI — whether to adopt it depends on the project's UI system choice; follow the existing convention if the project already uses uGUI
 
 ### Unity 2023.1+
+
+**MonoBehaviour initialization state properties:**
+- `didAwake` (bool) — `true` after `Awake()` has been called on this instance
+- `didStart` (bool) — `true` after `Start()` has been called on this instance
 
 **Awaitable — ALWAYS prefer over coroutines:**
 - Use `async Awaitable` methods instead of `IEnumerator` coroutines
@@ -134,10 +138,32 @@ _ = SpawnAsync(destroyCancellationToken);
 ### Unity 2023.2+
 
 **TextMesh Pro:**
-- TMP is merged into uGUI (`com.unity.ugui`); do NOT add the separate `com.unity.textmeshpro` package
+- TMP is merged into uGUI (`com.unity.ugui` **v2.0**); do NOT add the separate `com.unity.textmeshpro` package
 - Import and usage are unchanged: use `TMPro.TextMeshProUGUI`, `TMPro.TMP_Text`, etc.
 
-### Unity 6.3+
+**Mobile Screen Reader (Accessibility):**
+- `UnityEngine.Accessibility` module added; supports iOS VoiceOver and Android TalkBack
+- Build an `AccessibilityHierarchy` of `AccessibilityNode` instances to expose UI elements to the OS screen reader
+- Reference: https://unity.com/blog/engine-platform/mobile-screen-reader-support-in-unity
+
+### Unity 6000.0+
+
+**Unity Test Framework:**                                                                                                                                                                                        
+- `com.unity.test-framework` is bundled as a **core package** from 6000.0.44f1; no separate package installation required
+
+### Unity 6000.3+
 
 **Testing:**
 - Use UI Test Framework (`com.unity.test-framework.ui`) v1.0 for runtime UI interaction tests
+
+### Unity 6000.4+
+
+**ECS Core Packages:**
+- `com.unity.entities`, `com.unity.collections`, `com.unity.mathematics`, `com.unity.entities.graphics` are bundled as **core packages** (shipped with the editor); no separate package installation required
+
+**InstanceID → EntityId migration:**
+- `InstanceID` (int) is deprecated in favour of the new `EntityId` type
+- Do NOT cast `EntityId` to/from `int`
+- Do NOT rely on hash codes, string serialisation, or creation-order sorting of `EntityId`
+- `GetInstanceID()` and related methods are deprecated; prefer `EntityId`-based APIs
+- `InstanceID` will be removed in a future release
