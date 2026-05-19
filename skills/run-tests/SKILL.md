@@ -18,9 +18,8 @@ metadata:
 
 Before running tests, complete the following steps in order:
 
-1. If the editor is in Play Mode, stop it using the `unity_play_control` tool.
-2. If any code was modified, confirm compilation success using the `get_unity_compilation_result` tool before proceeding.
-3. To determine `assemblyNames` and `testMode` for a specific test class, run `.claude/skills/run-tests/scripts/resolve-test-target.sh <test-class-cs-path>`. The script prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when running an already-known assembly.
+1. If any code was modified, confirm compilation success using the `get_unity_compilation_result` tool before proceeding.
+2. To determine `assemblyNames` and `testMode` for a specific test class, run `.claude/skills/run-tests/scripts/resolve-test-target.sh <test-class-cs-path>`. The script prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when running an already-known assembly.
 
 Then use the `run_unity_tests` tool to run the tests on the Unity editor.
 
