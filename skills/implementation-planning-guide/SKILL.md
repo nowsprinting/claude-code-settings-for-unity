@@ -145,6 +145,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 **On subagent failure:**
 - If tests unexpectedly pass (no red phase):
   - For a **spec change**: assess whether the reason is legitimate (e.g., the original test code was too loose or not testing the right thing). If the reason is judged valid, proceed with the commit and note the finding in the summary. If the reason is unclear, report to the main agent without committing.
+  - For a **bug-fix**: if the reproduction test (marked `(reproduction test)` in the plan) passes unexpectedly, report to the main agent without committing — this has no exception.
   - For **all other task types**: report to the main agent without committing — main agent decides next action.
 - If compilation fails repeatedly, the subagent should report the blocker rather than loop indefinitely
 

@@ -68,6 +68,17 @@ When the SUT consumes a pseudo-random number generator (`UnityEngine.Random`, `S
 - **Statistical-property verification** — when the spec is about distribution shape (RPG damage variance, drop rates). Sample the SUT in a loop, compute statistics (mean, variance, histogram bucket counts), and assert on those. The `test-helper` package (`com.nowsprinting.test-helper`) provides lightweight sampling helpers; reach for `MathNet.Numerics` only when you need rigorous statistics.
 - **Characteristic verification** — when the SUT generates procedural content (e.g., roguelike maze). Don't assert exact output; assert structural properties the spec requires — e.g., "the exit is reachable from the entrance via path-finding," plus any algorithm-specific invariants.
 
+### Reproduction tests (bug-fix tasks only)
+
+When the task type is `bug-fix`, additionally apply the following during technique selection:
+
+- **Reproduction test** — design one test case that directly triggers the reported bug. Apply error guessing and, if the SUT has state, state transition testing to identify the minimal trigger condition. This test must fail before the fix and pass after.
+- **Regression tests** — identify adjacent behavior the fix might disturb, and apply the same techniques (equivalence partitioning, boundary value analysis, etc.) to derive coverage for those areas.
+
+### Cover and modify (refactoring tasks only)
+
+For refactoring work, apply **cover and modify**: design regression coverage before changing the implementation. Treat every bug as an opportunity to grow the regression suite.
+
 ## 4. Create Test Cases
 
 For each technique, derive coverage-aware test cases:
@@ -91,6 +102,7 @@ For each technique, derive coverage-aware test cases:
   - **Stub** — returns canned responses to isolate the SUT from a dependency
   - **Spy** — records interactions (calls, arguments) for later verification
   - **Fake** — a simplified but working implementation of a dependency
+- **Reproduction test marker** — when a test case is designed to reproduce a reported bug (see Section 3, Reproduction and regression tests), append `(reproduction test)` to the Verification Content column.
 - **Error-case inclusion rules**:
   - **UI input validation** — test invalid inputs that a user can enter through the UI (e.g., out-of-range values in a numeric text field). These represent real failure paths at the system boundary and must be tested.
   - **Dependency error returns** — whether to test error/failure paths from a dependency depends on its origin:
@@ -231,14 +243,3 @@ TESTABILITY: FAIL
 | Hidden state: `_score` modified by private method only | `GameManager._score` | Expose via read-only property or event |
 | Static coupling: `Random.Range` called directly        | `CardSelector.Pick`  | Inject `IRandomSource` interface       |
 ```
-
-## 7. Reproduction Testing Workflow
-
-**Trigger:** apply this section when the task type is `bug-fix`.
-
-Design the following test cases in addition to the normal test design (Sections 1–6):
-
-1. A **reproduction test** that directly triggers the reported bug — this test must fail before the fix and pass after.
-2. **Regression tests** for adjacent behavior the fix might disturb.
-
-For refactoring work, the same idea applies as **cover and modify**: design regression coverage before changing the implementation. Treat every bug as an opportunity to grow the regression suite.

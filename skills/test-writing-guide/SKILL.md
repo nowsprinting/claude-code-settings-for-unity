@@ -17,6 +17,21 @@ Guide for writing test code for Unity projects.
 - Before modifying any test file, check if the editor is in Play Mode. If it is, stop it using the `unity_play_control` tool first.
 - Never create `.meta` files. Unity editor creates them automatically.
 
+### Visual verification tests
+
+When implementing a visual verification test (a test designed to verify on-screen rendering via screenshot and image analysis):
+
+1. Take a screenshot using `[TakeScreenshot]` or `ScreenshotHelper.TakeScreenshotAsync()` (see `test-helper.md`).
+2. You do not need to write `Assert` statements for visual aspects. End the test method with a comment block instead:
+
+```csharp
+// Analyze the screenshot and verify the following after test execution:
+// - verification aspect from the test case
+// - verification aspect from the test case
+```
+
+The verification aspects to list are taken directly from the `(saves screenshot for image analysis: ...)` note in the test case design.
+
 ## Resources
 
 Read the appropriate resource file based on the situation:
