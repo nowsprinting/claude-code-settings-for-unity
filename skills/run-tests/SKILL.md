@@ -5,6 +5,9 @@ description: >-
   Make sure to use this skill whenever running, executing, or re-running tests on the Unity editor.
   This includes verifying implementations, debugging test failures, running specific test assemblies, or any task that involves the run_unity_tests tool.
   Even if the user just says "run the tests" or "check if it passes", use this skill.
+license: Unlicense
+metadata:
+  author: Koji Hasegawa
 ---
 
 ## Run Tests

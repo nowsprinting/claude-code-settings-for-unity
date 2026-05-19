@@ -5,6 +5,9 @@ description: >-
   designing test cases from requirements or specifications, including selecting
   test techniques, deriving test cases, and formatting them. Even for small
   features, load this skill to ensure test design rigor.
+license: Unlicense
+metadata:
+  author: Koji Hasegawa
 ---
 
 Guide for designing test cases for Unity projects.

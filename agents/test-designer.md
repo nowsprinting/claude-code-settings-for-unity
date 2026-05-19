@@ -9,6 +9,9 @@ description: >-
   main agent to loop back and re-invoke the Plan agent with the reported
   Testability Issues.
 tools: Bash, Read, AskUserQuestion, Skill, mcp__jetbrains__get_file_text_by_path, mcp__jetbrains__search_in_files_by_text, mcp__jetbrains__search_in_files_by_regex, mcp__jetbrains__search_symbol, mcp__jetbrains__get_symbol_info
+license: Unlicense
+metadata:
+  author: Koji Hasegawa
 ---
 
 You are a test design specialist for this Unity project (C#, Unity Test Framework).

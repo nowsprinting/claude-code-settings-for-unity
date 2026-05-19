@@ -7,6 +7,9 @@ description: >-
   and any task that will result in code changes. Even if the user only says
   "plan this" or "how should we implement this", load this skill to ensure the
   full test-first planning workflow is followed.
+license: Unlicense
+metadata:
+  author: Koji Hasegawa
 ---
 
 Guide for plan mode. This skill defines the orchestration workflow for test-first implementation planning.

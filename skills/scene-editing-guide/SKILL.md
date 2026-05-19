@@ -5,6 +5,9 @@ description: >-
   Make sure to use this skill whenever creating, editing, or modifying .unity scene files or .prefab prefab files, or writing editor scripts under Assets/Editor/ that generate or manipulate scenes, prefabs, or scene-bound assets.
   This includes adding GameObjects, building uGUI hierarchies, wiring up components, and any task that results in changes to .unity or .prefab files.
   Even for small edits or one-line scene changes, load this skill to ensure scene-authoring conventions are followed.
+license: Unlicense
+metadata:
+  author: Koji Hasegawa
 ---
 
 Guide for creating and editing Unity scene files in Unity projects.

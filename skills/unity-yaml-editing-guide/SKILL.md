@@ -5,6 +5,9 @@ description: >-
   Make sure to use this skill whenever creating, editing, or modifying simple YAML asset files (ScriptableObjects, Materials, etc.) via Edit/Write tools without going through the Unity Editor.
   This includes adjusting ScriptableObject field values, modifying material shader properties, or any task that results in direct changes to allowlisted Unity YAML asset files.
   Even for small edits or one-line value changes, load this skill to ensure Unity asset-YAML conventions are followed.
+license: Unlicense
+metadata:
+  author: Koji Hasegawa
 ---
 
 Guide for directly editing Unity YAML-serialized asset files for Unity projects.
