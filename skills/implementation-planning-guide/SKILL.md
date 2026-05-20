@@ -152,14 +152,13 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 ### Step 3: Implementation
 
 1. Implement the product code.
-2. Resolve diagnostics at the `error` severity level, using the `get_file_problems` tools.
-3. Run the tests using `/run-tests` command, and confirm that they all **pass**.
-4. Commit to git.
+2. Run the tests using `/run-tests` command, and confirm that they all **pass**.
+3. Commit to git.
 
 ### Step 4: Refactoring
 
 1. Run the `/simplify` skill on the modified files to refactor with DRY, KISS, and SOLID principles in mind.
 2. Re-run tests using `/run-tests` command to confirm they still pass.
-3. Resolve diagnostics at the `suggestion` or higher severity level, re-run tests using `/run-tests` command to pass.
+3. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit); re-run tests using `/run-tests` command to pass.
 4. Reformat the modified files, using `reformat_file` tool.
 5. Commit to git.
