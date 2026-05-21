@@ -138,7 +138,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 1. Load the `test-writing-guide` skill
 2. Implement test code based on the test cases in the plan file
 3. If this task is a spec change, also update any existing tests that are affected by the changed spec
-4. Run the added/modified tests using the `/run-tests` command, and confirm that they **fail**
+4. Run the added/modified tests using the `/run-tests` skill, and confirm that they **fail**
 5. Commit the test changes to git
 6. Return a concise summary: which test files were added/modified, and confirmation that they failed as expected
 
@@ -157,7 +157,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 
 ### Step 4: Refactoring
 
-1. Run the `/simplify` skill on the modified files to refactor with DRY, KISS, and SOLID principles in mind.
+1. Run the `/code-review high` skill.
 2. Re-run tests using `/run-tests` command to confirm they still pass.
 3. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit); re-run tests using `/run-tests` command to pass.
 4. Reformat the modified files, using `reformat_file` tool.
