@@ -8,6 +8,14 @@
 - Test doubles (Stub, Spy, Mock, Fake, Dummy) → `Tests/Runtime/TestDoubles/` (even for Edit Mode tests)
 - Test scenes → `Tests/Scenes/`
 
+### Creating a Test Assembly
+
+When `Tests/Runtime/` or `Tests/Editor/` does not exist yet, run `scripts/create-test-asmdef.sh <ProductionAsmdefPath>` to generate `<ProductionAssembly>.Tests.asmdef`.
+
+Examples:
+- `.claude/skills/test-writing-guide/scripts/create-test-asmdef.sh Assets/MyGame/Scripts/Runtime/MyGame.asmdef` → `Assets/MyGame/Tests/Runtime/MyGame.Tests.asmdef`
+- `.claude/skills/test-writing-guide/scripts/create-test-asmdef.sh Assets/MyGame/Scripts/Editor/MyGame.Editor.asmdef` → `Assets/MyGame/Tests/Editor/MyGame.Editor.Tests.asmdef`
+
 ## Naming
 
 | Target               | Convention                                                                                                                  |
