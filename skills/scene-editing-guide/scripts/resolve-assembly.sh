@@ -37,7 +37,7 @@ fi
 # Normalize to a single line so both pretty-printed and compact JSON match uniformly
 content=$(tr -d '\n\r' < "$asmdef")
 
-name=$(printf '%s\n' "$content" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+name=$(printf '%s\n' "$content" | grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -o '"[^"]*"$' | tr -d '"')
 if [ -z "$name" ]; then
   echo "Error: missing 'name' in $asmdef" >&2
   exit 1
