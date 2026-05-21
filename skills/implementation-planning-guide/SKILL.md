@@ -130,7 +130,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 - Whether this task is a **spec change** (and if so, the list of existing test files affected by the changed spec)
 - Whether this task is a **bug fix** (so the bug-reproducing test case from Phase 2.5 must be included)
 - Explicit instruction to load the `test-writing-guide` skill **before** writing or modifying any test code
-- The TDD red-phase expectation: tests must compile and run, but **must fail**
+- Red-phase expectation: tests must compile and run, but **must fail**
 
 **Subagent responsibilities:**
 1. Load the `test-writing-guide` skill
@@ -155,8 +155,9 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 
 ### Step 4: Refactoring
 
-1. Run the `/code-review high` skill.
+1. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit).
 2. Re-run tests using `/run-tests` command to confirm they still pass.
-3. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit); re-run tests using `/run-tests` command to pass.
-4. Reformat the modified files, using `reformat_file` tool.
-5. Commit to git.
+3. Run the `/code-review max` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction.
+4. Re-run tests using `/run-tests` command to confirm they still pass.
+5. Reformat the modified files, using `reformat_file` tool.
+6. Commit to git.

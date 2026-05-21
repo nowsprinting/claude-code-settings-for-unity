@@ -70,14 +70,14 @@ Do NOT maintain backward compatibility unless explicitly requested. Break things
     }
     ```
 
-## XML documentation
-
-- When implementing an interface or overriding an abstract member, use `/// <inheritdoc/>` instead of duplicating the documentation.
-
 ## IL2CPP and Reflection
 
 - Do NOT use `System.Reflection.Emit`. It is not supported under IL2CPP.
 - Methods invoked only via reflection must be annotated with `[UnityEngine.Scripting.Preserve]` so that managed code stripping does not remove them.
+
+## XML documentation
+
+- When implementing an interface or overriding an abstract member, use `/// <inheritdoc/>` instead of duplicating the documentation.
 
 ## "Why Not" Comments
 

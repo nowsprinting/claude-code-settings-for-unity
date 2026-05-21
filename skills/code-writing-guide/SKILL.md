@@ -25,3 +25,4 @@ Read the appropriate resource file based on the situation:
 - Before writing or modifying any code file: Read `.claude/skills/code-writing-guide/resources/unity-modern-guidelines.md`
 - Before writing or modifying MonoBehaviour lifecycle or event-handling methods (Awake, Start, OnEnable, OnDisable, OnDestroy, Update, FixedUpdate, LateUpdate, OnCollision*, OnTrigger*, OnGUI, OnMouse*, OnBecame*, OnPreCull, OnPreRender, OnPostRender, OnRenderImage, OnRenderObject, OnWillRenderObject, OnAnimatorMove, OnAnimatorIK, OnDrawGizmos): Read `.claude/skills/code-writing-guide/resources/unity-event-functions.md`
 - Before referencing an API, verifying a package behavior, or looking up documentation: Read `.claude/skills/code-writing-guide/resources/unity-references.md`
+- When resolving diagnostics or handling code review feedback: Read `.claude/skills/code-writing-guide/resources/diagnostics-review-feedback.md`
