@@ -21,7 +21,7 @@ This skill requires the following inputs in its prompt:
 | **Requirements**          | Required | The feature requirements to test against                                                             |
 | **Implementation design** | Required | Class names, public method signatures, dependency interfaces, and design rationale                   |
 | **Existing code context** | Optional | File paths and class summaries of relevant existing code                                             |
-| **Task type**             | Optional | `bug-fix` to trigger the Reproduction Testing Workflow (Section 7). Defaults to `feature` if omitted |
+| **Task type**             | Optional | `bug-fix` to trigger the Reproduction Testing Workflow (Section 3). Defaults to `feature` if omitted |
 
 Silently ignore the following if present in the prompt:
 - Test cases or manual test lists from a Plan agent — test design is this skill's sole responsibility
@@ -38,14 +38,15 @@ If the test target has low testability, flag it in the Testability Assessment (S
 For each test target, determine which layer it belongs to based on its nature and integration level:
 
 1. **Editor tests** — for Editor extension code (paths containing `/Editor/`), asset file validation, and cross-asset consistency checks.
-2. **Unit tests** — test runtime code logic for a **single class**. This includes Play Mode tests that verify behavior driven by Unity's lifecycle (Awake, Start, Update, etc.) or UI events, as long as the test target is one class. Prioritize **least integrated** classes and methods, testing them comprehensively; for highly integrated targets, keep test density low and focus on inter-class interactions.
-3. **Integration tests** — for coordination between **multiple MonoBehaviour components** that have no direct call relationship and interact through Unity's component system: via `AddComponent<T>()`, prefab composition, or scene placement. Unit tests cover classes/methods with direct call relationships; integration tests cover what only emerges from Unity wiring of multiple components.
-   - Examples: multiple components coordinating via `AddComponent<T>()`, prefab, or scene placement; multi-frame UI interactions through Unity's event system; scene transitions.
+2. **Unit tests** — test runtime code whose execution is **initiated by a direct method call**. This includes tests that verify behavior driven by Unity's lifecycle (Awake, Start, Update, etc.) or UI events. Prioritize **least integrated** targets, testing them comprehensively; for highly integrated targets (where the SUT collaborates with dependent objects), keep test density low and focus on interactions between objects.
+3. **Integration tests** — test targets that are a **GameObject with multiple components added via `AddComponent<T>()`**, a **prefab**, or a **scene**. Unit tests cover targets whose execution is initiated by a direct method call; integration tests cover behavior that only emerges from Unity's component wiring.
    - Add the integration test method to the test class of the **primary class** involved; OR
    - Create a new dedicated test class if there is no clear primary class (e.g., when the subject is a prefab or scene).
    - Explicitly design integration tests **before** falling back to visual verification tests or manual tests; only drop to those layers when the behavior cannot be expressed as a functional assertion.
 4. **Visual verification tests** — verify that actual on-screen rendering is correct. Take screenshots in the test code, and image analysis (see Section 4). Design these **before** falling back to manual tests.
 5. **Manual tests** — reserved for items that **neither automated tests nor image analysis can verify** — i.e., items requiring human sensory judgment with no objective pass/fail criterion (e.g., game feel, animation polish, audio balance). Do NOT add manual tests for scenarios already covered by integration tests or visual verification tests, even if they seem "worth confirming by eye."
+
+**Note:** Never use Edit Mode tests for runtime code logic. Edit Mode and Play Mode test runners cannot execute simultaneously — splitting coverage for a single SUT between the two modes prevents running all tests at once. Play Mode tests can run on actual devices (player builds), which Editor tests cannot.
 
 ## 3. Select Testing Techniques
 
@@ -53,11 +54,19 @@ For each test target, determine which layer it belongs to based on its nature an
 
 For each test target, select appropriate techniques:
 
-- **Equivalence partitioning** — group inputs into valid/invalid classes; one representative per class
-- **Boundary value analysis** — test at the edges of each equivalence class. Over-testing boundaries inflates the number of test cases and increases maintenance cost on every spec change. Mitigate this with parameterized tests that consolidate boundary cases into a single test method. When the spec doesn't differentiate behavior near edges (e.g., display color mapping), a representative per equivalence class is sufficient and boundary testing can be skipped entirely.
-- **State transition testing** — if the target has a finite-state-machine (FSM); one test case covers only 0-switch coverage
+- **Equivalence partitioning** — group inputs into valid/invalid partitions; one representative per partition. When an **invalid** equivalence partition exists but the spec does not define its behavior (e.g., what happens for negative input, out-of-range values, null), use the `AskUserQuestion` tool to confirm the expected behavior before deriving test cases. Do not guess or invent the behavior.
+- **Boundary value analysis** — test at the edges of each equivalence partition. Over-testing boundaries inflates the number of test cases and increases maintenance cost on every spec change. Mitigate this with parameterized tests that consolidate boundary cases into a single test method. When the spec doesn't differentiate behavior near edges (e.g., display color mapping), a representative per equivalence partition is sufficient and boundary testing can be skipped entirely.
+- **State transition testing** — if the target has a finite-state-machine (FSM); one test case covers only 0-switch coverage (a direct transition from state A to state B with no intermediate states in between)
 - **Decision table testing** — if multiple conditions combine to produce different outcomes
 - **Error guessing** — experience-based; derive cases from failure patterns common in game development. Examples to consider: rapid button mashing, simultaneous button press, input during scene transition / loading, collision tunneling, random distribution bias or PRNG sequence looping, numeric overflow, network failure. Use this to surface implementation concerns that spec-based techniques don't reach.
+
+### Invalid partition
+
+- **UI input validation** — test invalid inputs that a user can enter through the UI (e.g., out-of-range values in a numeric text field). These represent real failure paths at the system boundary and must be tested.
+- **Dependency error returns** — whether to test error/failure paths from a dependency depends on its origin:
+  - **Library or framework** (external, not owned by this project) → test it; use a stub to inject the error condition.
+  - **Game's own code** (another component in this project) → skip; trust internal code correctness.
+  - **Uncertain** → use `AskUserQuestion` to confirm with the user before designing test cases.
 
 ### Testing randomness (PRNG-dependent SUT)
 
@@ -67,6 +76,15 @@ When the SUT consumes a pseudo-random number generator (`UnityEngine.Random`, `S
 - **Range / bounds verification** — when only the output range is specified (e.g., random spawn coordinates within a region). Assert with `And`/`Range` constraints, or `Within`/custom comparer for tolerances. Combine with `Repeat` attribute so flakiness isn't masked by a single lucky run.
 - **Statistical-property verification** — when the spec is about distribution shape (RPG damage variance, drop rates). Sample the SUT in a loop, compute statistics (mean, variance, histogram bucket counts), and assert on those. The `test-helper` package (`com.nowsprinting.test-helper`) provides lightweight sampling helpers; reach for `MathNet.Numerics` only when you need rigorous statistics.
 - **Characteristic verification** — when the SUT generates procedural content (e.g., roguelike maze). Don't assert exact output; assert structural properties the spec requires — e.g., "the exit is reachable from the entrance via path-finding," plus any algorithm-specific invariants.
+
+### Integration test perspectives
+
+When the test target is a prefab, scene, or a GameObject composed of multiple components, consider the following test perspectives:
+
+- **UI operation sequences** — click, drag, and other player operations that advance game mechanics over one or more frames
+- **Multi-frame event system interactions** — behaviors triggered by Unity's event system that unfold across multiple frames
+- **Scene transitions** — behaviors that span or depend on scene loading and unloading
+- **UI blocking** — verify that UI elements behind a modal dialog or overlay are unreachable (blocked from interaction); conversely, verify those elements are reachable when no overlay is present
 
 ### Reproduction tests (bug-fix tasks only)
 
@@ -83,8 +101,9 @@ For refactoring work, apply **cover and modify**: design regression coverage bef
 
 For each technique, derive coverage-aware test cases:
 
-- Test least-integrated targets comprehensively; for highly integrated targets, write low-density tests focused on inter-class and inter-method interactions rather than exhaustive input coverage.
-- Use the naming convention: `MethodName_Condition_ExpectedResult`
+- Use the naming convention based on the layer:
+  - **Editor tests / Unit tests**: `MethodName_Condition_ExpectedResult` — the test target is a method, so include the method name.
+  - **Integration tests / Visual verification tests**: `Condition_ExpectedResult` — the test target is NOT a single method (it is a multi-component interaction or an on-screen rendering), so do NOT include a method name.
 - Do NOT create sequential IDs in test case names
 - Describe the verification content clearly
   - Verify one condition per test. **Exception**: when multiple properties of the state resulting from a transition must all be correct simultaneously, a single test may assert all of them together. In that case, list each property being verified in the Verification Content column.
@@ -94,7 +113,7 @@ For each technique, derive coverage-aware test cases:
   - Sync vs async / coroutine choice
   - Construction details of test inputs (e.g., how to build `PointerEventData`, how to instantiate fixtures)
   - Any other implementation/mechanism detail — those decisions belong to the test-writing phase
-- **Parameterized tests** — when multiple test cases share the same expected outcome but differ only in their input arguments (e.g., boundary values or multiple representatives within the same equivalence class), consolidate them into a single test case row.
+- **Parameterized tests** — when multiple test cases share the same expected outcome but differ only in their input arguments (e.g., boundary values or multiple representatives within the same equivalence partition), consolidate them into a single test case row.
   - Do NOT over-consolidate: keep separate rows for cases that belong to different equivalence partitions or produce different outcomes.
   - In the Verification Content column, indicate that multiple argument patterns are tested. Do NOT specify the framework mechanism (`TestCase`, `Values`, etc.) — that's a test-writing decision.
   - Example: `Add_TwoIntegers_ReturnsSum` | `加算結果が引数の和になる（複数の引数パターンを検証）`
@@ -103,18 +122,10 @@ For each technique, derive coverage-aware test cases:
   - **Spy** — records interactions (calls, arguments) for later verification
   - **Fake** — a simplified but working implementation of a dependency
 - **Reproduction test marker** — when a test case is designed to reproduce a reported bug (see Section 3, Reproduction and regression tests), append `(reproduction test)` to the Verification Content column.
-- **Error-case inclusion rules**:
-  - **UI input validation** — test invalid inputs that a user can enter through the UI (e.g., out-of-range values in a numeric text field). These represent real failure paths at the system boundary and must be tested.
-  - **Dependency error returns** — whether to test error/failure paths from a dependency depends on its origin:
-    - **Library or framework** (external, not owned by this project) → test it; use a stub to inject the error condition.
-    - **Game's own code** (another component in this project) → skip; trust internal code correctness.
-    - **Uncertain** → use `AskUserQuestion` to confirm with the user before designing test cases.
-- When a test requires scene-level setup, creating a dedicated test scene is acceptable.
-- **UI reachability verification** — you can design a test case that verifies a background element is blocked (unreachable) by an overlaid element, or conversely that it remains reachable when no overlay is present. Use this to validate that dialogs, panels, or popups correctly prevent interaction with elements behind them.
 - For visual verifications (e.g., on-screen rendering, UI layout), save a screenshot during test execution and verify it via image analysis. Note this in the Verification Content column along with the specific visual aspects to verify — e.g., `(saves screenshot for image analysis: element positions within screen, no overlap between elements, correct visibility state, text/background contrast)`.
   - **NEVER create a dedicated visual verification test class** — add visual verification test methods to the *same test class* as the functional tests.
   - **Screenshot resolution**: By default, do not fix a specific resolution for screenshot tests — let them run at whatever resolution the test environment provides. Only fix a resolution when the test condition explicitly depends on it (e.g., verifying element positions at a stated viewport size).
-  - **Resolution as test condition**: When a screenshot test targets a specific resolution as part of its verification (e.g., layout at 960×540), include the resolution in the `<Condition>` segment of the test method name — e.g., `Awake_At960x540_RendersVersionLabelAtBottomRight`. This makes each resolution a distinct, independently runnable test case.
+  - **Resolution as test condition**: When a screenshot test targets a specific resolution as part of its verification (e.g., layout at 960×540), include the resolution in the `<Condition>` segment of the test method name — e.g., `At960x540_RendersVersionLabelAtBottomRight` (visual verification tests use `Condition_ExpectedResult`, with no method name). This makes each resolution a distinct, independently runnable test case.
   - **Visual aspects to verify in screenshots** — always include the following in the `(saves screenshot for image analysis: ...)` list when applicable:
     - Element positions within screen, no overlap between elements, correct visibility state
     - **Text/background contrast** — verify that text color has sufficient contrast against its background so text is clearly legible
@@ -180,9 +191,9 @@ Test perspectives: <techniques selected from Section 3>
 
 Test perspectives: <class-level testing angles, e.g., multi-frame interaction, scene transition>
 
-| Test Method                 | Verification Content                       |
-|-----------------------------|--------------------------------------------|
-| `Method_Condition_Expected` | What is verified by this test              |
+| Test Method            | Verification Content                       |
+|------------------------|--------------------------------------------|
+| `Condition_Expected`   | What is verified by this test              |
 
 ### Visual verification tests
 
@@ -190,9 +201,9 @@ Test perspectives: <class-level testing angles, e.g., multi-frame interaction, s
 
 Test perspectives: <class-level visual aspects to verify, e.g., layout, contrast>
 
-| Test Method                 | Verification Content                       |
-|-----------------------------|--------------------------------------------|
-| `Method_Condition_Expected` | What is verified (saves screenshot for image analysis: element positions, no overlap, text/background contrast) |
+| Test Method            | Verification Content                       |
+|------------------------|--------------------------------------------|
+| `Condition_Expected`   | What is verified (saves screenshot for image analysis: element positions, no overlap, text/background contrast) |
 
 ### Manual tests
 

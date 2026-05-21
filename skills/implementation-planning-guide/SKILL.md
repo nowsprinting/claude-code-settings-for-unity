@@ -67,8 +67,7 @@ After Phase 2, launch the `test-designer` agent using the following prompt struc
 - **Do NOT add output format specifications.** The `test-designer` agent's output format is self-contained; caller-supplied format overrides produce non-standard output.
 
 The `test-designer` agent returns:
-- Formatted Test Cases table (ready to paste into the plan file)
-- Manual Tests list
+- Test cases across all layers (Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests) — ready to paste into the plan file as one block
 - **Testability Assessment** (`TESTABILITY: PASS`, `WARN`, or `FAIL`)
 
 #### Handling the Testability Assessment
@@ -106,10 +105,9 @@ Assemble the plan file with the following sections:
 
 1. **Context** — why this change is needed
 2. **Implementation Design** — from Phase 2 Plan agent output
-3. **Test Cases** — pasted from the `test-designer` agent output. **When transcribing, rewrite any mechanism-leaking descriptions to verification content only.** Test framework attributes (`[Test]` / `[UnityTest]` / `[LoadScene]`, etc.) and async/coroutine patterns are decided in the test-writing phase, not in the plan.
-4. **Manual Tests** — pasted verbatim from the `test-designer` agent output
-5. **Known Trade-offs** — from `TESTABILITY: WARN` issues (if any)
-6. **Development Workflow** — the steps below, copied into the plan file
+3. **Test Cases** — pasted as one block from the `test-designer` agent output (all 5 layers: Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests). **When transcribing, rewrite any mechanism-leaking descriptions to verification content only.** Test framework attributes (`[Test]` / `[UnityTest]` / `[LoadScene]`, etc.) and async/coroutine patterns are decided in the test-writing phase, not in the plan.
+4. **Known Trade-offs** — from `TESTABILITY: WARN` issues (if any)
+5. **Development Workflow** — the steps below, copied into the plan file
 
 ### Phase 5: Call ExitPlanMode
 
