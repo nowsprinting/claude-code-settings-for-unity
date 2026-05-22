@@ -1,7 +1,6 @@
 {
   "env": {
     "ENABLE_TOOL_SEARCH": "true",
-    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "400000",
     "MCP_TIMEOUT": "5000",
     "MCP_TOOL_TIMEOUT": "180000"
   },
@@ -122,13 +121,9 @@
       "mcp__jetbrains__build_project",
       "mcp__jetbrains__execute_terminal_command"
     ],
-    "defaultMode": "plan",
     "additionalDirectories": []
   },
   "enabledPlugins": {
     "csharp-lsp@claude-plugins-official": true
-  },
-  "advisorModel": "opus",
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh"
+  }
 }
