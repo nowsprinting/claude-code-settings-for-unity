@@ -17,6 +17,7 @@ Guide for writing test code for Unity projects.
 
 - Before modifying any test file, check if the editor is in Play Mode. If it is, stop it using the `unity_play_control` tool first.
 - Never create `.meta` files. Unity editor creates them automatically.
+- When the test class requires a dedicated `.unity` scene file or `.prefab` (e.g., to share setup across multiple test methods via `[LoadScene]`), invoke the `edit-scene` skill to create or modify that file.
 
 ### Visual verification tests
 

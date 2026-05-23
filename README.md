@@ -11,7 +11,7 @@ When creating an implementation plan in plan mode, the `plan-feature` skill prod
 | `code-writing-guide`       | Coding conventions and guidelines for Unity C# projects                               |                                                                                                                                                                                                              |
 | `plan-feature`             | Orchestrates the test-first planning workflow for feature implementation in plan mode |                                                                                                                                                                                                              |
 | `run-tests`                | Running Unity tests via the `run_unity_tests` tool                                    | JetBrains built-in [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
-| `scene-editing-guide`      | Creates and modifies `.unity` and `.prefab` files                                     | JetBrains built-in [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
+| `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                     | JetBrains built-in [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
 | `test-designing-guide`     | Test design methodology for deriving test cases from requirements                     |                                                                                                                                                                                                              |
 | `test-writing-guide`       | Conventions for writing Unity Test Framework test code                                | [Test Helper](https://github.com/nowsprinting/test-helper) and [UI Test Helper](https://github.com/nowsprinting/test-helper.ui) package                                                                      |
 | `unity-yaml-editing-guide` | Guidelines for directly hand-editing Unity YAML asset files                           |                                                                                                                                                                                                              |
@@ -26,7 +26,7 @@ When creating an implementation plan in plan mode, the `plan-feature` skill prod
 
 ### 1. MCP Server Configuration
 
-The `run-tests` and `scene-editing-guide` skills require JetBrains MCP servers. Add the following to your project `.mcp.json` or user MCP settings:
+The `run-tests` and `edit-scene` skills require JetBrains MCP servers. Add the following to your project `.mcp.json` or user MCP settings:
 
 ```json
 {

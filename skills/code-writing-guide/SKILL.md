@@ -17,6 +17,7 @@ Guide for writing code in Unity projects.
 
 - Before modifying any code file, check if the editor is in Play Mode. If it is, stop it using the `unity_play_control` tool first.
 - Never create `.meta` files. Unity editor creates them automatically.
+- When editing (creating or modifying) scene (`.unity`) or prefab (`.prefab`) files, use the `edit-scene` skill.
 
 ## Resources
 

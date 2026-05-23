@@ -284,7 +284,7 @@ private SomeClass CreateSystemUnderTest() { ... }
 
 Even when holding the instance in a private field for `TearDown` cleanup, always use the return value of the creation method inside test methods.
 
-When multiple test methods in a class share the same scene setup, create a test scene file and load it with `[LoadScene]` instead of repeating the setup in each test. Scene files are typically 1:1 with the test class, so name the file after the test class (e.g., `CharacterControllerTest.unity`). Place it under `Tests/Scenes/`.
+When multiple test methods in a class share the same scene setup, create a test scene file and load it with `[LoadScene]` instead of repeating the setup in each test. Scene files are typically 1:1 with the test class, so name the file after the test class (e.g., `CharacterControllerTest.unity`). Place it under `Tests/Scenes/`. Use the `edit-scene` skill to create the scene file.
 
 ## Lifecycle Hooks
 

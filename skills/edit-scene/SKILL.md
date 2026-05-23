@@ -1,10 +1,13 @@
 ---
-name: scene-editing-guide
+name: edit-scene
 description: >-
-  Provides guidelines for creating and modifying Unity scene and prefab files in Unity projects.
-  Make sure to use this skill whenever creating, editing, or modifying .unity scene files or .prefab prefab files, or writing editor scripts under Assets/Editor/ that generate or manipulate scenes, prefabs, or scene-bound assets.
-  This includes adding GameObjects, building uGUI hierarchies, wiring up components, and any task that results in changes to .unity or .prefab files.
-  Even for small edits or one-line scene changes, load this skill to ensure scene-authoring conventions are followed.
+  Creates and modifies Unity scene and prefab files. Use this skill whenever
+  creating, editing, or modifying .unity scene files or .prefab prefab files,
+  or writing editor scripts under Assets/Editor/ that generate or manipulate
+  scenes, prefabs, or scene-bound assets. This includes adding GameObjects,
+  building uGUI hierarchies, wiring up components, and any task that results
+  in changes to .unity or .prefab files.
+context: fork
 license: Unlicense
 metadata:
   author: Koji Hasegawa
@@ -23,7 +26,7 @@ Guide for creating and editing Unity scene files in Unity projects.
 - **When a Unity Editor tool returns `error` or `canceled`, wait 10 seconds before retrying.** Domain reload typically takes several seconds; immediate retry hits the same in-flight reload and fails again. Do not switch tools in the meantime (e.g., calling `unity_play_control` to verify state) — that just compounds the multiplexed calls. If the same tool returns `error` or `canceled` on two consecutive attempts (with the 10-second wait between them), stop and consult the user instead of retrying further.
 - Before running an editor script, check if the editor is in Play Mode using the `unity_play_control` tool. If it is, stop it first.
 - After modifying code, confirm compilation success using the `get_unity_compilation_result` tool before running.
-- **To determine which assembly an editor script belongs to**, run `.claude/skills/scene-editing-guide/scripts/resolve-assembly.sh <cs-file-path>`. It walks up directories to find the nearest `.asmdef`; if none is found, it falls back to `Assembly-CSharp-Editor` (path contains `/Editor/`) or `Assembly-CSharp`.
+- **To determine which assembly an editor script belongs to**, run `${CLAUDE_SKILL_DIR}/scripts/resolve-assembly.sh <cs-file-path>`. It walks up directories to find the nearest `.asmdef`; if none is found, it falls back to `Assembly-CSharp-Editor` (path contains `/Editor/`) or `Assembly-CSharp`.
 - **Prefer the `run_method_in_unity` tool (MCP Server Extension for Unity) for execution.** Define a `public static` method in the script (adding `[MenuItem("Tools/...")]` is optional) and invoke it directly via `run_method_in_unity`. Only fall back to `execute_run_configuration` or other alternatives when `run_method_in_unity` is unavailable.
 - Never create `.meta` files manually — Unity generates them automatically. Match each `.meta` file's commit fate to its paired asset:
   - Scene/prefab files (`.unity`, `.prefab`) and their referenced assets (materials, SOs, etc.) → **commit** (required for GUID resolution)
@@ -46,8 +49,8 @@ Guide for creating and editing Unity scene files in Unity projects.
 
 ## Resources
 
-- Before writing or modifying any editor script that creates or manipulates uGUI components: Read `.claude/skills/scene-editing-guide/resources/ugui.md`
+- Before writing or modifying any editor script that creates or manipulates uGUI components: Read `${CLAUDE_SKILL_DIR}/resources/ugui.md`
 
 ## Troubleshooting
 
-- The `run_method_in_unity` tool is not available or fails with a connection error: Read `.claude/skills/scene-editing-guide/resources/troubleshooting-run-method-in-unity.md`
+- The `run_method_in_unity` tool is not available or fails with a connection error: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-run-method-in-unity.md`
