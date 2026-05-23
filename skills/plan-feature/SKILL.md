@@ -1,10 +1,9 @@
 ---
-name: implementation-planning-guide
+name: plan-feature
 description: >-
-  Orchestrates the test-first implementation planning workflow. Use this skill
-  whenever plan mode is active and the task involves implementing, adding, or
-  modifying code. This includes feature implementation, bug fixes, refactoring,
-  and any task that will result in code changes. Even if the user only says
+  Orchestrates the test-first implementation planning workflow for feature
+  implementation. Use this skill whenever plan mode is active and the task
+  involves implementing or adding a new feature. Even if the user only says
   "plan this" or "how should we implement this", load this skill to ensure the
   full test-first planning workflow is followed.
 license: Unlicense
@@ -41,9 +40,9 @@ The Plan agent output should include **only**:
 - Dependency interfaces (if any)
 - Brief rationale for design decisions
 
-**Do NOT include** test cases, manual tests, or any test design — those are the sole responsibility of the `test-designer` agent in Phase 2.5.
+**Do NOT include** test cases, manual tests, or any test design — those are the sole responsibility of the `test-designer` agent in Phase 3.
 
-### Phase 2.5: Test Case Design (test-designer Agent)
+### Phase 3: Test Case Design (test-designer Agent)
 
 After Phase 2, launch the `test-designer` agent using the following prompt structure:
 
@@ -74,8 +73,8 @@ The `test-designer` agent returns:
 
 | Result              | Action                                                                                          |
 |---------------------|-------------------------------------------------------------------------------------------------|
-| `TESTABILITY: PASS` | Proceed to Phase 3 (Review)                                                                     |
-| `TESTABILITY: WARN` | Proceed to Phase 3; record the Testability Issues in the plan file's "Known Trade-offs" section |
+| `TESTABILITY: PASS` | Proceed to Phase 4 (Review)                                                                     |
+| `TESTABILITY: WARN` | Proceed to Phase 4; record the Testability Issues in the plan file's "Known Trade-offs" section |
 | `TESTABILITY: FAIL` | Loop back to Phase 2 (see below); maximum **1 retry**                                           |
 
 #### Loopback to Phase 2 (on FAIL)
@@ -85,7 +84,7 @@ The `test-designer` agent returns:
    - The previous design output
    - The Testability Issues
    - Instruction: "Revise the design to address the Testability Issues listed below"
-3. Re-run Phase 2.5 with the revised design
+3. Re-run Phase 3 with the revised design
 4. If still `FAIL` after one retry → **Abort** (see below)
 
 #### Abort (second consecutive FAIL)
@@ -95,11 +94,11 @@ Use `AskUserQuestion` to present the user with three options:
 - Exit plan mode to revise the requirements
 - Provide explicit design hints and re-run Phase 2
 
-### Phase 3: Review
+### Phase 4: Review
 
 Read the critical files identified in the plan. Verify that the Plan agent's design and the `test-designer` agent's test cases are consistent with each other and with the user's intent.
 
-### Phase 4: Write the Plan File
+### Phase 5: Write the Plan File
 
 Assemble the plan file with the following sections:
 
@@ -109,7 +108,7 @@ Assemble the plan file with the following sections:
 4. **Known Trade-offs** — from `TESTABILITY: WARN` issues (if any)
 5. **Development Workflow** — the steps below, copied into the plan file
 
-### Phase 5: Call ExitPlanMode
+### Phase 6: Call ExitPlanMode
 
 ---
 
@@ -128,7 +127,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 **Subagent prompt must include:**
 - Path to the plan file (so it can read the Test Cases table)
 - Whether this task is a **spec change** (and if so, the list of existing test files affected by the changed spec)
-- Whether this task is a **bug fix** (so the bug-reproducing test case from Phase 2.5 must be included)
+- Whether this task is a **bug fix** (so the bug-reproducing test case from Phase 3 must be included)
 - Explicit instruction to load the `test-writing-guide` skill **before** writing or modifying any test code
 - Red-phase expectation: tests must compile and run, but **must fail**
 
