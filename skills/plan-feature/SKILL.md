@@ -164,7 +164,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
    - Return a summary: duplicates found and removed, or "no duplicates found"
 2. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit).
 3. Re-run tests using `/run-tests` command to confirm they still pass.
-4. Run the `/code-review max` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction.
+4. Run the `/code-review ${CLAUDE_EFFORT}` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction.
 5. Re-run tests using `/run-tests` command to confirm they still pass.
 6. Reformat the modified files, using `reformat_file` tool.
 7. Commit to git.

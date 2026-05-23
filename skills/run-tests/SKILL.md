@@ -19,7 +19,7 @@ metadata:
 Before running tests, complete the following steps in order:
 
 1. If any code was modified, confirm compilation success using the `get_unity_compilation_result` tool before proceeding.
-2. To determine `assemblyNames` and `testMode` for a specific test class, run `.claude/skills/run-tests/scripts/resolve-test-target.sh <test-class-cs-path>`. The script prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when running an already-known assembly.
+2. To determine `assemblyNames` and `testMode` for a specific test class, run `${CLAUDE_SKILL_DIR}/scripts/resolve-test-target.sh <test-class-cs-path>`. The script prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when running an already-known assembly.
 
 Then use the `run_unity_tests` tool to run the tests on the Unity editor.
 
@@ -39,6 +39,6 @@ When consulting, clarify:
 
 Read the appropriate resource file based on the situation:
 
-- Any Unity MCP tool (`run_unity_tests`, `unity_play_control`, `get_unity_compilation_result`) is not available or fails with a connection error: Read `.claude/skills/run-tests/resources/troubleshooting-run-unity-tests.md`
-- A test fails due to an assertion, constraint, or comparer in the `TestHelper` namespace (excluding `TestHelper.UI`): Read `.claude/skills/run-tests/resources/troubleshooting-test-helper.md`
-- A test fails due to an exception thrown from the `TestHelper.UI` namespace: Read `.claude/skills/run-tests/resources/troubleshooting-test-helper-ui.md`
+- Any Unity MCP tool (`run_unity_tests`, `unity_play_control`, `get_unity_compilation_result`) is not available or fails with a connection error: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-run-unity-tests.md`
+- A test fails due to an assertion, constraint, or comparer in the `TestHelper` namespace (excluding `TestHelper.UI`): Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-test-helper.md`
+- A test fails due to an exception thrown from the `TestHelper.UI` namespace: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-test-helper-ui.md`

@@ -8,7 +8,9 @@ description: >-
   Visual verification tests, Manual tests) and a Testability Assessment
   (TESTABILITY: PASS / WARN / FAIL). A FAIL result signals the main agent to
   loop back and re-invoke the Plan agent with the reported Testability Issues.
-tools: Bash, Read, AskUserQuestion, Skill, mcp__jetbrains__get_file_text_by_path, mcp__jetbrains__search_in_files_by_text, mcp__jetbrains__search_in_files_by_regex, mcp__jetbrains__search_symbol, mcp__jetbrains__get_symbol_info
+model: opus
+skills:
+  - test-designing-guide
 license: Unlicense
 metadata:
   author: Koji Hasegawa
@@ -18,13 +20,12 @@ You are a test design specialist for this Unity project (C#, Unity Test Framewor
 
 ## Your responsibilities
 
-1. Load the `test-designing-guide` skill immediately at start via the Skill tool.
-2. Read and understand:
+1. Read and understand:
    - The requirements / feature specification passed in the prompt
    - The class/method design produced by the Plan agent (signatures, dependencies, seams)
    - Any relevant existing code context from Phase 1 Explore
-3. Apply the test design methodology from the `test-designing-guide` skill to produce test cases.
-4. Output the result in the exact format specified by the skill.
+2. Apply the test design methodology from the `test-designing-guide` skill to produce test cases.
+3. Output the result in the exact format specified by the skill.
 
 ## Input you will receive
 

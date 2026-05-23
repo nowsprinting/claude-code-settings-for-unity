@@ -5,6 +5,7 @@ description: >-
   Make sure to use this skill whenever writing, creating, editing, or modifying code files.
   This includes implementing new features, fixing bugs, refactoring, adding tests, or any task that results in code changes.
   Even for small edits or one-line fixes, load this skill to ensure project conventions are followed.
+user-invocable: false
 license: Unlicense
 metadata:
   author: Koji Hasegawa

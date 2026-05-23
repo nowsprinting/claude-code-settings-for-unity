@@ -5,6 +5,7 @@ description: >-
   Make sure to use this skill whenever writing, creating, editing, or modifying test code files (files under Tests/).
   This includes implementing new tests, fixing test failures, adding test cases, or any task that results in test code changes.
   Even for small edits or one-line fixes, load this skill to ensure test conventions are followed.
+user-invocable: false
 license: Unlicense
 metadata:
   author: Koji Hasegawa
