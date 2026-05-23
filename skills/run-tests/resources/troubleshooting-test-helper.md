@@ -1,5 +1,21 @@
 # Troubleshooting the TestHelper package
 
+## TakeScreenshot
+
+### Screenshot resolution is too low for image analysis
+
+When the GameView resolution is too low, screenshots produced by `[TakeScreenshot]` may not have enough detail for pixel-level image analysis.
+
+Add `[GameViewResolution(960, 540, "540p")]` to the test method temporarily, re-run the tests, then remove the attribute. Do not commit resolution overrides to visual verification tests (see `test-helper.md` "Image-analysis screenshot tests").
+
+```csharp
+[Test]
+[CreateScene]
+[GameViewResolution(960, 540, "540p")]  // temporary — remove after analysis
+[TakeScreenshot(directory: "Logs/Screenshots/MyScene")]
+public async Task MyTest_Screenshot() { ... }
+```
+
 ## FlipTexture2dEqualityComparer
 
 Steps to analyze a failing assertion that uses `FlipTexture2dEqualityComparer`.

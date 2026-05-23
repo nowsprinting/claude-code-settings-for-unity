@@ -45,6 +45,21 @@ public void OneTimeSetUp() => LoadAssetAttribute.LoadAssets(this);
 | Set a custom resolution | `[GameViewResolution(640, 480, "VGA")]` — wait one frame to apply if not using `[CreateScene]`/`[LoadScene]` |
 | Show or hide Gizmos | `[GizmosShowOnGameView(true)]` on the test method only |
 
+**When to add `[FocusGameView]`**: Add it at class scope on any test class that includes UI-operation tests (using `GameObjectFinder`, click/drag operators, etc.) or screenshot-capture tests. This avoids batchmode edge cases and unintended GameView focus loss. Do not add it assembly-wide or on classes that test pure logic without UI interaction.
+
+```csharp
+[TestFixture]
+[FocusGameView]
+public class MySceneTest { ... }
+```
+
+**CI resolution**: To fix the GameView resolution in CI, pass test-helper CLI arguments in Unity's startup parameters rather than hardcoding it in test code:
+
+```
+-testHelperGameViewResolution WQVGA              # GameViewResolution enum name
+-testHelperGameViewWidth 400 -testHelperGameViewHeight 240  # or explicit pixels
+```
+
 ### Skip conditions
 
 | Goal | Solution |
@@ -68,22 +83,8 @@ public void OneTimeSetUp() => LoadAssetAttribute.LoadAssets(this);
 | Take a screenshot at a specific point in the test | `await ScreenshotHelper.TakeScreenshotAsync()` |
 | Record video while the test runs | `[RecordVideo]` (requires Instant Replay package) |
 
-`[FocusGameView]` or `[GameViewResolution]` is required when running in batchmode.
-
-**When to add `[FocusGameView]`**: Add it at class scope on any test class that includes UI-operation tests (using `GameObjectFinder`, click/drag operators, etc.) or screenshot-capture tests. This avoids batchmode edge cases and unintended GameView focus loss. Do not add it assembly-wide or on classes that test pure logic without UI interaction.
-
-```csharp
-[TestFixture]
-[FocusGameView]
-public class MySceneTest { ... }
-```
-
-**CI resolution**: To fix the GameView resolution in CI, pass test-helper CLI arguments in Unity's startup parameters rather than hardcoding it in test code:
-
-```
--testHelperGameViewResolution WQVGA              # GameViewResolution enum name
--testHelperGameViewWidth 400 -testHelperGameViewHeight 240  # or explicit pixels
-```
+- The test method must be async (`async Task` or `IEnumerator` coroutine) — `[TakeScreenshot]` relies on Unity's async infrastructure to capture the frame after the test completes.
+- `[FocusGameView]` or `[GameViewResolution]` is required when running in batchmode.
 
 **Image-analysis screenshot tests**: Do not override the resolution — let the test run at whatever the environment provides.
 
