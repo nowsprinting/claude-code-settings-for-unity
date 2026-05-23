@@ -91,13 +91,18 @@ var font = Resources.Load<Font>("Fonts/NotoSansJP-Regular");
 | `lineSpacing` | `1` | — |
 | `alignment` | `UpperLeft` | `MiddleCenter` |
 | `horizontalOverflow` | `Wrap` | — |
-| `verticalOverflow` | `Truncate` | — |
+| `verticalOverflow` | `Overflow` | — |
 | `richText` | `true` | — |
 | `bestFit` | `false` | — |
 | `minSize` | `10` | — |
 | `maxSize` | `40` | — |
 | `alignByGeometry` | `false` | — |
 | `color` | `s_TextColor` ≈ `#323232` | — |
+
+> **`verticalOverflow`: always use `Overflow`, not the Unity engine default `Truncate`.**
+> Legacy Text with `Truncate` + a vertically-centered alignment (`MiddleCenter`, `MiddleLeft`, `MiddleRight`) silently produces an **empty mesh** — no text rendered, no error — when `fontLineHeight > rectHeight`. The mechanism: MiddleCenter shifts the text block upward so the first line starts above `y = 0`; Unity's TextGenerator then excludes that line as "out of bounds", leaving no lines at all. `HorizontalOverflow: Wrap` compounds this by increasing the block height whenever text wraps.
+>
+> If `Truncate` is genuinely required: switch alignment to `UpperLeft` (first line always starts at `y = 0`) and ensure `rectHeight ≥ fontSize × 1.4` to accommodate the font's actual line height.
 
 ## `DefaultControls.Resources` setup
 
