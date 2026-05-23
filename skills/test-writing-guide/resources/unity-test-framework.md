@@ -477,6 +477,60 @@ Follow the Spy naming convention from [Spy MonoBehaviour Conventions](#spy-monob
 
 - Do not use reflection to access `private` members.
 
+## UI Layout Testing
+
+Call `Canvas.ForceUpdateCanvases()` then `await Awaitable.NextFrameAsync()` before asserting to ensure layout is computed.
+
+### Text truncation and overflow
+
+These assertions use `Text` component properties directly; no helper methods required.
+
+| What to detect                      | Assertion                                                                                                |
+|-------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Text horizontal overflow            | `Assert.That(text.preferredWidth, Is.LessThanOrEqualTo(rt.rect.width + 1f))`                             |
+| Text vertical overflow / truncation | `Assert.That(text.preferredHeight, Is.LessThanOrEqualTo(rt.rect.height + 1f))`                           |
+| Characters hidden by Truncate       | `Assert.That(text.cachedTextGenerator.characterCountVisible, Is.EqualTo(text.text.Length))`              |
+| BestFit shrinks to unreadable size  | `Assert.That(text.cachedTextGenerator.fontSizeUsedForBestFit, Is.GreaterThanOrEqualTo(minReadableSize))` |
+
+> **Note on `characterCountVisible`**: returns `-1` when the `TextGenerator` has never populated (e.g., zero-size container, font size larger than container height). `-1 ≠ text.Length` still fails the assertion and indicates a layout problem.
+
+### Element overlap and out-of-bounds
+
+Add these helpers to the test class to convert world-space corners into a reference-local `Rect`:
+
+```csharp
+private static Rect GetLocalRect(RectTransform rt, RectTransform reference)
+{
+    var corners = new Vector3[4];
+    rt.GetWorldCorners(corners);
+    for (var i = 0; i < 4; i++)
+        corners[i] = reference.InverseTransformPoint(corners[i]);
+    return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+}
+
+private static bool IsWithin(Rect inner, Rect outer) =>
+    inner.xMin >= outer.xMin - 0.5f &&
+    inner.xMax <= outer.xMax + 0.5f &&
+    inner.yMin >= outer.yMin - 0.5f &&
+    inner.yMax <= outer.yMax + 0.5f;
+```
+
+| What to detect            | Assertion                                                                                                      |
+|---------------------------|----------------------------------------------------------------------------------------------------------------|
+| Element outside container | `Assert.That(IsWithin(GetLocalRect(elementRt, containerRt), GetLocalRect(containerRt, containerRt)), Is.True)` |
+| Two elements overlapping  | `Assert.That(GetLocalRect(rt1, rootRt).Overlaps(GetLocalRect(rt2, rootRt)), Is.False)`                         |
+
+### `RectMask2D` precondition
+
+`GetWorldCorners` returns the full `RectTransform` bounds regardless of masking. When asserting that an element inside a `RectMask2D` container is not clipped, guard with `Assume.That` first:
+
+```csharp
+Assume.That(containerGo.GetComponent<RectMask2D>(), Is.Not.Null); // Without RectMask2D, a failing IsWithin does not mean clipping — elements outside the bounds are still rendered
+Assert.That(IsWithin(imageRect, containerRect), Is.True);
+```
+
+---
+
 ## Comments
 
 Do NOT write XML documentation comments in test code.

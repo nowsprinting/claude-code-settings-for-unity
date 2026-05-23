@@ -85,6 +85,7 @@ When the test target is a prefab, scene, or a GameObject composed of multiple co
 - **Multi-frame event system interactions** — behaviors triggered by Unity's event system that unfold across multiple frames
 - **Scene transitions** — behaviors that span or depend on scene loading and unloading
 - **UI blocking** — verify that UI elements behind a modal dialog or overlay are unreachable (blocked from interaction); conversely, verify those elements are reachable when no overlay is present
+- **UI layout** — verify element bounds, overlap, and text overflow using rect-comparison assertions. Any layout bug expressible as a geometric predicate (is element within bounds? do two elements overlap? does text overflow its container?) warrants a deterministic integration test assertion. Visual verification tests are still valuable for initial implementation review, but do not rely on them **alone** for regression — image analysis is not run on every CI pass, so regression coverage requires explicit assertions
 
 ### Reproduction tests (bug-fix tasks only)
 
