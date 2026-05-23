@@ -155,9 +155,17 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 
 ### Step 4: Refactoring
 
-1. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit).
-2. Re-run tests using `/run-tests` command to confirm they still pass.
-3. Run the `/code-review max` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction.
-4. Re-run tests using `/run-tests` command to confirm they still pass.
-5. Reformat the modified files, using `reformat_file` tool.
-6. Commit to git.
+1. Launch a `general-purpose` subagent to check for duplicate test cases in the test files added or modified in this iteration (plus any existing files in the same test class). Subagent instructions:
+   - Read all relevant test files
+   - Identify tests with the same condition (setup/input) **and** the same assertion (observation/expected value) — these are true duplicates
+   - Do **not** flag tests that share only one of the two (different condition → not a duplicate; same condition but different assertion → not a duplicate)
+   - Do **not** merge same-condition tests into a single multi-assert test
+   - Do **not** parameterize expected values
+   - If duplicates are found: delete the redundant one (keep the more accurately named test), then commit the removal
+   - Return a summary: duplicates found and removed, or "no duplicates found"
+2. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit).
+3. Re-run tests using `/run-tests` command to confirm they still pass.
+4. Run the `/code-review max` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction.
+5. Re-run tests using `/run-tests` command to confirm they still pass.
+6. Reformat the modified files, using `reformat_file` tool.
+7. Commit to git.
