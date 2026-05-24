@@ -9,6 +9,7 @@ When creating an implementation plan in plan mode, the `plan-feature` skill prod
 | Skill                      | Description                                                                           | Required                                                                                                                                                                                                     |
 |----------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `code-writing-guide`       | Coding conventions and guidelines for Unity C# projects                               |                                                                                                                                                                                                              |
+| `fix-bug`                  | Diagnoses and fixes bugs using a test-first workflow (reproduce, diagnose, fix)       |                                                                                                                                                                                                              |
 | `plan-feature`             | Orchestrates the test-first planning workflow for feature implementation in plan mode |                                                                                                                                                                                                              |
 | `run-tests`                | Running Unity tests via the `run_unity_tests` tool                                    | JetBrains built-in [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
 | `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                     | JetBrains built-in [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
@@ -18,9 +19,9 @@ When creating an implementation plan in plan mode, the `plan-feature` skill prod
 
 ## Included Agents
 
-| Agent           | Description                                                                 |
-|-----------------|-----------------------------------------------------------------------------|
-| `test-designer` | Designs test cases during plan mode after class/method designs are produced |
+| Agent           | Description                                                                                                         |
+|-----------------|---------------------------------------------------------------------------------------------------------------------|
+| `test-designer` | Designs test cases during plan mode after class/method designs are produced, using the `test-designing-guide` skill |
 
 ## Recommended Project Settings
 

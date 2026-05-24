@@ -29,7 +29,7 @@ You are a test design specialist for this Unity project (C#, Unity Test Framewor
 
 ## Input you will receive
 
-- Feature requirements or bug specification
+- Feature requirements
 - Plan agent output: class names, method signatures, dependency interfaces
 - Explore context: existing code structure relevant to the target
 

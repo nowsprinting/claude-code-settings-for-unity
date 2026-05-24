@@ -22,7 +22,6 @@ This skill requires the following inputs in its prompt:
 | **Requirements**          | Required | The feature requirements to test against                                                             |
 | **Implementation design** | Required | Class names, public method signatures, dependency interfaces, and design rationale                   |
 | **Existing code context** | Optional | File paths and class summaries of relevant existing code                                             |
-| **Task type**             | Optional | `bug-fix` to trigger the Reproduction Testing Workflow (Section 3). Defaults to `feature` if omitted |
 
 Silently ignore the following if present in the prompt:
 - Test cases or manual test lists from a Plan agent — test design is this skill's sole responsibility
@@ -90,7 +89,7 @@ When the test target is a prefab, scene, or a GameObject composed of multiple co
 
 ### Reproduction tests (bug-fix tasks only)
 
-When the task type is `bug-fix`, additionally apply the following during technique selection:
+When the task type is bug-fix, additionally apply the following during technique selection:
 
 - **Reproduction test** — design one test case that directly triggers the reported bug. Apply error guessing and, if the SUT has state, state transition testing to identify the minimal trigger condition. This test must fail before the fix and pass after.
 - **Regression tests** — identify adjacent behavior the fix might disturb, and apply the same techniques (equivalence partitioning, boundary value analysis, etc.) to derive coverage for those areas.

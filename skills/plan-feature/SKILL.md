@@ -2,16 +2,21 @@
 name: plan-feature
 description: >-
   Orchestrates the test-first implementation planning workflow for feature
-  implementation. Use this skill whenever plan mode is active and the task
-  involves implementing or adding a new feature. Even if the user only says
-  "plan this" or "how should we implement this", load this skill to ensure the
-  full test-first planning workflow is followed.
+  implementation and spec changes. Use this skill whenever plan mode is active
+  and the task involves implementing or adding a new feature, or changing an
+  existing specification. Even if the user only says "plan this" or "how should
+  we implement this", load this skill to ensure the full test-first planning
+  workflow is followed.
 license: Unlicense
 metadata:
   author: Koji Hasegawa
 ---
 
 Guide for plan mode. This skill defines the orchestration workflow for test-first implementation planning.
+
+## Task Type Check
+
+If the user's request is to investigate or fix a bug rather than implement a new feature, change a specification, or refactor, use `ExitPlanMode` immediately and guide the user to invoke the `/fix-bug` skill instead. The rest of this skill applies to feature implementation, spec changes, and refactoring only.
 
 ## Plan Mode Workflow
 
@@ -50,9 +55,6 @@ After Phase 2, launch the `test-designer` agent using the following prompt struc
 ## Requirements
 [feature requirements]
 
-## Task Type
-[feature | bug-fix]
-
 ## Implementation Design
 [class names, public method signatures, dependency interfaces, and design rationale from the Phase 2 Plan agent]
 
@@ -61,7 +63,6 @@ After Phase 2, launch the `test-designer` agent using the following prompt struc
 ```
 
 **Rules for assembling the prompt:**
-- Set `Task Type` to `bug-fix` when fixing a bug; omit or set to `feature` otherwise.
 - Under `Implementation Design`, include only the design output — **do NOT include any test cases or manual tests** the Plan agent may have produced. Test design is the `test-designer` agent's sole responsibility.
 - **Do NOT add output format specifications.** The `test-designer` agent's output format is self-contained; caller-supplied format overrides produce non-standard output.
 
@@ -127,7 +128,6 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 **Subagent prompt must include:**
 - Path to the plan file (so it can read the Test Cases table)
 - Whether this task is a **spec change** (and if so, the list of existing test files affected by the changed spec)
-- Whether this task is a **bug fix** (so the bug-reproducing test case from Phase 3 must be included)
 - Explicit instruction to load the `test-writing-guide` skill **before** writing or modifying any test code
 - Red-phase expectation: tests must compile and run, but **must fail**
 
@@ -142,7 +142,6 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
 **On subagent failure:**
 - If tests unexpectedly pass (no red phase):
   - For a **spec change**: assess whether the reason is legitimate (e.g., the original test code was too loose or not testing the right thing). If the reason is judged valid, proceed with the commit and note the finding in the summary. If the reason is unclear, report to the main agent without committing.
-  - For a **bug-fix**: if the reproduction test (marked `(reproduction test)` in the plan) passes unexpectedly, report to the main agent without committing — this has no exception.
   - For **all other task types**: report to the main agent without committing — main agent decides next action.
 - If compilation fails repeatedly, the subagent should report the blocker rather than loop indefinitely
 
@@ -164,7 +163,7 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
    - Return a summary: duplicates found and removed, or "no duplicates found"
 2. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit).
 3. Re-run tests using `/run-tests` command to confirm they still pass.
-4. Run the `/code-review ${CLAUDE_EFFORT}` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction.
+4. Run the `/code-review ${CLAUDE_EFFORT}` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction. If the finding is a **bug**, write a reproduction test first, run it with `/run-tests` to confirm it **fails**, then fix the bug.
 5. Re-run tests using `/run-tests` command to confirm they still pass.
 6. Reformat the modified files, using `reformat_file` tool.
 7. Commit to git.
