@@ -14,6 +14,14 @@ metadata:
 
 Guide for plan mode. This skill defines the orchestration workflow for test-first implementation planning.
 
+## Mode Check
+
+This skill requires **plan mode**. Before doing anything else, check the current mode:
+
+- `ExitPlanMode` is in the deferred tools list → **not in plan mode** → stop immediately and tell the user:
+  > "This skill (`/plan-feature`) requires plan mode. Enter plan mode first: use `/plan` or press Shift+Tab to toggle."
+- `ExitPlanMode` is NOT in the deferred tools list (i.e., directly callable) → in plan mode → proceed.
+
 ## Task Type Check
 
 If the user's request is to investigate or fix a bug rather than implement a new feature, change a specification, or refactor, use `ExitPlanMode` immediately and guide the user to invoke the `/fix-bug` skill instead. The rest of this skill applies to feature implementation, spec changes, and refactoring only.

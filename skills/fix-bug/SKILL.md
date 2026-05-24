@@ -14,6 +14,14 @@ metadata:
 Guide for diagnosing and fixing bugs. This skill defines a test-first debugging workflow:
 reproduce the bug with a failing test, diagnose the root cause, then fix it.
 
+## Mode Check
+
+This skill must be used **outside plan mode**. Before doing anything else, check the current mode:
+
+- `ExitPlanMode` is NOT in the deferred tools list (i.e., directly callable) → **in plan mode** → stop immediately and tell the user:
+  > "This skill (`/fix-bug`) must be used outside plan mode. Please exit plan mode first."
+- `ExitPlanMode` is in the deferred tools list → not in plan mode → proceed.
+
 ## Workflow
 
 ### Phase 1: Clarify the Bug Report
@@ -21,8 +29,8 @@ reproduce the bug with a failing test, diagnose the root cause, then fix it.
 Extract the following from the user's prompt:
 
 - **Condition**: the setup or scenario that triggers the bug
-- **Actual**: the observed behavior
 - **Expected**: the expected behavior
+- **Actual**: the observed behavior
 
 If any of the three cannot be determined from the prompt, use `AskUserQuestion` to ask
 the user before proceeding. All three must be known before moving to Phase 2.
