@@ -107,7 +107,7 @@ Assemble the plan file with the following sections:
 2. **Implementation Design** — from Phase 2 Plan agent output
 3. **Test Cases** — pasted as one block from the `test-designer` agent output (all 5 layers: Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests). **When transcribing, rewrite any mechanism-leaking descriptions to verification content only.** Test framework attributes (`[Test]` / `[UnityTest]` / `[LoadScene]`, etc.) and async/coroutine patterns are decided in the test-writing phase, not in the plan.
 4. **Known Trade-offs** — from `TESTABILITY: WARN` issues (if any)
-5. **Development Workflow** — the steps below, copied into the plan file
+5. **Development Workflow** — paste the **Template** from `## Development Workflow` verbatim as the body of this section in the plan file, then add any project-specific steps per `CLAUDE.md`
 
 ### Phase 6: Call ExitPlanMode
 
@@ -115,13 +115,43 @@ Assemble the plan file with the following sections:
 
 ## Development Workflow
 
-Include the following implementation steps in the plan file:
+Paste the **Template** below verbatim as the body of the `## Development Workflow` section in the plan file. Then follow the **Agent Execution Notes** when executing each step.
 
+### Template
+
+```markdown
 ### Step 1: Skeleton (Compilable)
 
-Create only the types and public method signatures for the product code that can be compiled. It's okay even if it does not work.
+- [ ] Create types and public method signatures only — must compile, need not work yet
 
 ### Step 2: Test First
+
+- [ ] Load the `test-writing-guide` skill
+- [ ] Implement test code based on the Test Cases in this plan file
+- [ ] If spec change: update any existing tests affected by the changed spec
+- [ ] Run tests with `/run-tests` and confirm they **fail** (red phase)
+- [ ] Commit test changes to git
+
+### Step 3: Implementation
+
+- [ ] Implement product code
+- [ ] Run tests with `/run-tests` and confirm **all pass**
+- [ ] Commit to git
+
+### Step 4: Refactoring
+
+- [ ] Detect and remove duplicate tests in added/modified test files
+- [ ] Resolve diagnostics at warning or higher for each modified file (`open_file_in_editor` → `getDiagnostics` → fix, one file at a time)
+- [ ] Run tests with `/run-tests` and confirm **all pass**
+- [ ] Run `/code-review ${CLAUDE_EFFORT}` and apply findings (for bug findings: write a reproduction test, confirm it **fails**, then fix)
+- [ ] Run tests with `/run-tests` and confirm **all pass**
+- [ ] Reformat modified files with `reformat_file`
+- [ ] Commit to git
+```
+
+### Agent Execution Notes
+
+#### Step 2: Test First
 
 Launch a `general-purpose` subagent. The main agent itself does **NOT** load `test-writing-guide` — the subagent does.
 
@@ -145,25 +175,13 @@ Launch a `general-purpose` subagent. The main agent itself does **NOT** load `te
   - For **all other task types**: report to the main agent without committing — main agent decides next action.
 - If compilation fails repeatedly, the subagent should report the blocker rather than loop indefinitely
 
-### Step 3: Implementation
+#### Step 4: Refactoring — Duplicate Test Check
 
-1. Implement the product code.
-2. Run the tests using `/run-tests` command, and confirm that they all **pass**.
-3. Commit to git.
-
-### Step 4: Refactoring
-
-1. Launch a `general-purpose` subagent to check for duplicate test cases in the test files added or modified in this iteration (plus any existing files in the same test class). Subagent instructions:
-   - Read all relevant test files
-   - Identify tests with the same condition (setup/input) **and** the same assertion (observation/expected value) — these are true duplicates
-   - Do **not** flag tests that share only one of the two (different condition → not a duplicate; same condition but different assertion → not a duplicate)
-   - Do **not** merge same-condition tests into a single multi-assert test
-   - Do **not** parameterize expected values
-   - If duplicates are found: delete the redundant one (keep the more accurately named test), then commit the removal
-   - Return a summary: duplicates found and removed, or "no duplicates found"
-2. Resolve diagnostics at the `warning` or higher severity level: for each modified file, run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file at a time (opening all files at once exceeds the editor tab limit).
-3. Re-run tests using `/run-tests` command to confirm they still pass.
-4. Run the `/code-review ${CLAUDE_EFFORT}` skill, then apply the returned findings to fix the code. For each finding: read the flagged code, understand the issue, and make the correction. If the finding is a **bug**, write a reproduction test first, run it with `/run-tests` to confirm it **fails**, then fix the bug.
-5. Re-run tests using `/run-tests` command to confirm they still pass.
-6. Reformat the modified files, using `reformat_file` tool.
-7. Commit to git.
+Launch a `general-purpose` subagent to check for duplicate test cases in the test files added or modified in this iteration (plus any existing files in the same test class). Subagent instructions:
+- Read all relevant test files
+- Identify tests with the same condition (setup/input) **and** the same assertion (observation/expected value) — these are true duplicates
+- Do **not** flag tests that share only one of the two (different condition → not a duplicate; same condition but different assertion → not a duplicate)
+- Do **not** merge same-condition tests into a single multi-assert test
+- Do **not** parameterize expected values
+- If duplicates are found: delete the redundant one (keep the more accurately named test), then commit the removal
+- Return a summary: duplicates found and removed, or "no duplicates found"
