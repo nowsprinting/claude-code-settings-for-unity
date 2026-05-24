@@ -14,28 +14,51 @@ var finder = new GameObjectFinder();                    // 1 second timeout (def
 var finder = new GameObjectFinder(timeoutSeconds: 5d);  // custom timeout
 ```
 
-| Goal | Method |
-|------|--------|
-| Find by name | `await finder.FindByNameAsync("ButtonName")` |
-| Find by hierarchy path | `await finder.FindByPathAsync("/**/Dialog/**/OK")` — supports `*`, `**`, `?` glob |
-| Find by component type, text, or texture | `await finder.FindByMatcherAsync(matcher)` |
-| Find inside a scrollable or pageable component | `await finder.FindByMatcherAsync(matcher, paginator: paginator)` |
+| Goal                                           | Method                                                                            |
+|------------------------------------------------|-----------------------------------------------------------------------------------|
+| Find by name                                   | `await finder.FindByNameAsync("ButtonName")`                                      |
+| Find by hierarchy path                         | `await finder.FindByPathAsync("/**/Dialog/**/OK")` — supports `*`, `**`, `?` glob |
+| Find by component type, text, or texture       | `await finder.FindByMatcherAsync(matcher)`                                        |
+| Find inside a scrollable or pageable component | `await finder.FindByMatcherAsync(matcher, paginator: paginator)`                  |
 
 Common options: `reachable: true` (default), `interactable: false` (default).  
 Result: use `.GameObject` on the returned value.
 
 **UI blocking**: `reachable: true` is also useful for verifying that elements behind a modal dialog or overlay are blocked from interaction — or conversely, that they become reachable once the overlay is dismissed.
 
+### Matchers
+
 **Built-in matchers**: `ComponentMatcher`, `ButtonMatcher` (by name/path/text/texture), `ToggleMatcher` (by name/path/text)
+
+**ButtonMatcher examples** — use when `FindByNameAsync` is not specific enough (e.g. multiple buttons exist, or you want to match by label text):
+
+```csharp
+// Find by label text (child Text/TMP_Text content)
+var matcher = new ButtonMatcher(text: "攻略開始");
+var btn = await finder.FindByMatcherAsync(matcher, interactable: true);
+await new UguiClickOperator().OperateAsync(btn.GameObject);
+
+// Find by GameObject name
+var btn = await finder.FindByMatcherAsync(new ButtonMatcher(name: "SubmitButton"));
+
+// Find by hierarchy path (glob)
+var btn = await finder.FindByMatcherAsync(new ButtonMatcher(path: "**/Dialog/**/OK"));
+
+// Find by sprite name on the Button's Image
+var btn = await finder.FindByMatcherAsync(new ButtonMatcher(texture: "icon_close"));
+```
+
+### Paginators
 
 **Built-in paginators**: `UguiScrollbarPaginator(scrollbar)`, `UguiScrollRectPaginator(scrollRect)`
 
-**ScrollRect navigation**: pass a paginator when the target is inside a `ScrollRect`; the finder scrolls to reveal the target before the reachability check.
+**UguiScrollRectPaginator example** — pass a paginator when the target is inside a `ScrollRect`; the finder scrolls to reveal the target before the reachability check:
 
 ```csharp
 var scrollViewGo = await finder.FindByNameAsync("ScrollView");
 var paginator = new UguiScrollRectPaginator(scrollViewGo.GameObject.GetComponent<ScrollRect>());
 var item = await finder.FindByNameAsync("ItemName", interactable: true, paginator: paginator);
+await new UguiClickOperator().OperateAsync(item.GameObject);
 ```
 
 `UguiScrollRectPaginator.ResetAsync` resets the scroll position to the top-left before searching so the scan always starts from the beginning.
@@ -50,16 +73,54 @@ var op = new UguiClickOperator();
 await op.OperateAsync(result.GameObject);
 ```
 
-| Goal | Operator |
-|------|----------|
-| Click | `UguiClickOperator` |
-| Click and hold | `UguiClickAndHoldOperator` |
-| Double click | `UguiDoubleClickOperator` |
-| Drag and drop | `UguiDragAndDropOperator` |
-| Scroll wheel | `UguiScrollWheelOperator` |
-| Swipe or flick | `UguiSwipeOperator` — for flick: `new UguiSwipeOperator(swipeSpeed: 2000, swipeDistance: 80f)` |
-| Type text into InputField | `UguiTextInputOperator` |
-| Toggle a Toggle component | `UguiToggleOperator` |
+| Goal                      | Operator                                                                                       |
+|---------------------------|------------------------------------------------------------------------------------------------|
+| Click                     | `UguiClickOperator`                                                                            |
+| Click and hold            | `UguiClickAndHoldOperator`                                                                     |
+| Double click              | `UguiDoubleClickOperator`                                                                      |
+| Drag and drop             | `UguiDragAndDropOperator`                                                                      |
+| Scroll wheel              | `UguiScrollWheelOperator`                                                                      |
+| Swipe or flick            | `UguiSwipeOperator` — for flick: `new UguiSwipeOperator(swipeSpeed: 2000, swipeDistance: 80f)` |
+| Type text into InputField | `UguiTextInputOperator`                                                                        |
+| Toggle a Toggle component | `UguiToggleOperator`                                                                           |
+
+**Usage examples**
+
+```csharp
+// Click
+var btn = await finder.FindByNameAsync("SubmitButton", interactable: true);
+await new UguiClickOperator().OperateAsync(btn.GameObject);
+
+// Click and hold (default 1000 ms; override with holdMillis)
+var btn = await finder.FindByNameAsync("HoldButton", interactable: true);
+await new UguiClickAndHoldOperator(holdMillis: 500).OperateAsync(btn.GameObject);
+
+// Double click (default 100 ms interval between clicks)
+var btn = await finder.FindByNameAsync("DoubleClickButton", interactable: true);
+await new UguiDoubleClickOperator().OperateAsync(btn.GameObject);
+
+// Drag and drop — pass source and target GameObjects directly
+await new UguiDragAndDropOperator().OperateAsync(cardView.gameObject, enemyView.gameObject);
+
+// Scroll wheel (default scrollSpeed: 1200 px/s)
+var list = await finder.FindByNameAsync("ScrollView", interactable: true);
+await new UguiScrollWheelOperator().OperateAsync(list.GameObject);
+
+// Swipe (default swipeSpeed: 1200 px/s, swipeDistance: 200 px)
+var panel = await finder.FindByNameAsync("SwipePanel", interactable: true);
+await new UguiSwipeOperator().OperateAsync(panel.GameObject);
+
+// Flick — high speed, short distance
+await new UguiSwipeOperator(swipeSpeed: 2000, swipeDistance: 80f).OperateAsync(panel.GameObject);
+
+// Type text into InputField — activate the panel first so the field is interactable
+var field = await finder.FindByNameAsync("MyInputField", interactable: true);
+await new UguiTextInputOperator().OperateAsync(field.GameObject, "Hello");
+
+// Toggle
+var toggle = await finder.FindByNameAsync("MyToggle", interactable: true);
+await new UguiToggleOperator().OperateAsync(toggle.GameObject);
+```
 
 ---
 

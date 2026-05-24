@@ -19,6 +19,38 @@ Guide for writing test code for Unity projects.
 - Never create `.meta` files. Unity editor creates them automatically.
 - When the test class requires a dedicated `.unity` scene file or `.prefab` (e.g., to share setup across multiple test methods via `[LoadScene]`), invoke the `edit-scene` skill to create or modify that file.
 
+### UI Tests
+
+#### Use GameObjectFinder instead of GameObject.Find
+
+When finding a GameObject that the user interacts with, always use `GameObjectFinder` instead of `UnityEngine.GameObject.Find` or `Object.FindFirstObjectByType`.
+Reasons:
+
+- **Timing safety**: polls until the object appears, so tests pass even when GameObjects are instantiated asynchronously or on the next frame
+- **Reachability and interactability**: verifies the object is actually reachable by the user and (optionally) interactable — matching real user experience
+- **Blocking check**: `reachable: true` (default) naturally catches elements hidden behind a modal or overlay — which is often the bug being caught
+- **Actionable failures**: throws `TimeoutException` with a clear message; `GameObject.Find` silently returns `null` and causes a confusing `NullReferenceException` later
+
+#### Use Operators instead of direct event invocation
+
+When reproducing user actions, always use uGUI operators (e.g., `UguiClickOperator`, `UguiTextInputOperator`) instead of directly calling button events or setting field values.
+Reasons:
+
+- **Correct event simulation**: operators go through Unity's `EventSystem` and input pipeline, exercising the same code path as a real user interaction
+- **Reachability-gated**: test fails if a UI element is disabled or hidden
+- **Simpler test code**: no need to look up components or call internal methods; just find the GameObject and operate it
+
+```csharp
+// NG — bypasses Unity's event pipeline
+button.onClick.Invoke();
+inputField.text = "12345";
+scene.OnConfirmClicked();
+
+// OK — goes through the proper UI event path
+await new UguiClickOperator().OperateAsync(buttonGo);
+await new UguiTextInputOperator().OperateAsync(inputFieldGo, "12345");
+```
+
 ### Visual verification tests
 
 When implementing a visual verification test (a test designed to verify on-screen rendering via screenshot and image analysis):
@@ -34,4 +66,4 @@ Read the appropriate resource file based on the situation:
 
 - Before writing or modifying any test code file: Read `.claude/skills/test-writing-guide/resources/unity-test-framework.md`
 - Before writing or modifying any test code file: Read `.claude/skills/test-writing-guide/resources/test-helper.md`
-- Before writing or modifying test code that operates UI (e.g., using `GameObjectFinder`, `Monkey`, or uGUI operators): Read `.claude/skills/test-writing-guide/resources/test-helper-ui.md`
+- Before writing or modifying UI tests (e.g., using `GameObjectFinder`, `Monkey`, or uGUI operators): Read `.claude/skills/test-writing-guide/resources/test-helper-ui.md`
