@@ -24,6 +24,8 @@ var finder = new GameObjectFinder(timeoutSeconds: 5d);  // custom timeout
 Common options: `reachable: true` (default), `interactable: false` (default).  
 Result: use `.GameObject` on the returned value.
 
+**UI blocking**: `reachable: true` is also useful for verifying that elements behind a modal dialog or overlay are blocked from interaction — or conversely, that they become reachable once the overlay is dismissed.
+
 **Built-in matchers**: `ComponentMatcher`, `ButtonMatcher` (by name/path/text/texture), `ToggleMatcher` (by name/path/text)
 
 **Built-in paginators**: `UguiScrollbarPaginator(scrollbar)`, `UguiScrollRectPaginator(scrollRect)`
@@ -95,6 +97,48 @@ Assembly reference: `TestHelper.UI.Annotations`
 | Offset the raycast point from pivot (world space) | `WorldOffsetAnnotation` |
 | Override the raycast point (screen space) | `ScreenPositionAnnotation` |
 | Override the raycast point (world space) | `WorldPositionAnnotation` |
+
+---
+
+## Customization
+
+Use these extension points when the game uses a custom UI framework or requires special behavior.
+
+### Strategy functions / interfaces
+
+| Extension point | Purpose | When to replace |
+|-----------------|---------|-----------------|
+| `IsInteractable` function | Returns whether a `Component` is interactable. Default: true for uGUI components whose `interactable` property is true. | When you have non-uGUI components that need interactability checks |
+| `IIgnoreStrategy` | `IsIgnored` returns whether a `GameObject` should be skipped by Monkey. Default: true if `IgnoreAnnotation` is attached. | When you need name/path-based exclusion rules |
+| `IReachableStrategy` | `IsReachable` returns whether a `GameObject` is reachable from the user. Default: raycast from `Camera.main` to pivot. | When you need a different camera or randomized raycast point |
+
+Pass custom strategies to the `GameObjectFinder` or `MonkeyConfig` constructors:
+
+```csharp
+var reachableStrategy = new DefaultReachableStrategy(verboseLogger: Debug.unityLogger);
+var finder = new GameObjectFinder(reachableStrategy: reachableStrategy);
+```
+
+### IGameObjectMatcher interface
+
+Implement `IGameObjectMatcher` to match GameObjects by custom conditions. Pass the instance to `FindByMatcherAsync`.
+
+### IPaginator interface
+
+Implement `IPaginator` to support custom scrollable or pageable components. Required methods:
+- `ResetAsync` — navigate to the first page
+- `NextPageAsync` — navigate to the next page
+- `HasNextPage` — returns whether a next page exists
+
+Constructor requirements: first parameter must be a `MonoBehaviour` subclass (the pageable component to control).
+
+### IOperator interface
+
+Implement `IOperator` (or a sub-interface like `IClickOperator`) to support non-uGUI interactions. Implement:
+- `CanOperate(GameObject)` — whether the operation applies to this object
+- `OperateAsync(GameObject, RaycastResult, CancellationToken)` — execute the operation
+
+Register custom operators via `MonkeyConfig.Operators` or `OperatorPool.Register<T>()`.
 
 ---
 
