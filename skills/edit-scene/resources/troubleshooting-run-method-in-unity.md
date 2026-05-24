@@ -130,5 +130,5 @@ Editor-side crashes, compilation errors, and `Debug.Log` output from the invoked
 1. Check `errorMessage` first — validation and connection failures need no log investigation.
 2. For `success: true`, always inspect `logs` for `"type": "Error"` entries before concluding the method succeeded.
 3. If the response is delayed and the Editor is running and connected, the Unity-side method is most likely stuck in a long-running operation, infinite loop, or waiting on something that never completes — no log line is written on dispatch. Force-quit and restart the Editor, then retry once.
-4. For `"did not connect within 30 seconds"`, the recovery procedure is the same as `run_unity_tests` — see [Unity Editor not connected](torubleshooting.md#success-false--unity-editor-not-connected) in `torubleshooting.md`. Note: `BackendUnityModel=null` is a `run_unity_tests` C# handler log and will not appear for this tool.
+4. For `"did not connect within 30 seconds"`, see [Unity Editor not connected](#success-false--unity-editor-not-connected) in this file. Note: `BackendUnityModel=null` is a `run_unity_tests` C# handler log and will not appear for this tool.
 5. For method resolution failures, verify the assembly compiles via `get_unity_compilation_result`, then re-check the fully qualified type name and method signature in the source.

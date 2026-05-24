@@ -233,7 +233,7 @@ For project-specific comparers (`FlipTexture2dEqualityComparer`, `XmlComparer`),
 
 ## No Control Flow in Tests
 
-Never use `if`, `switch`, `for`, `foreach`, or the ternary operator in test code. Tests must be straight-line single-pass code.
+Never use `if`, `switch`, `for`, `foreach`, `while`, or the ternary operator in test code. Tests must be straight-line single-pass code — control flow makes the expected outcome ambiguous and reduces trust in the test itself; a bug in a branch can hide behind a path that was never taken.
 
 ## Parameterized Tests
 
@@ -299,7 +299,7 @@ Guidelines:
 - `[SetUp]` owns initialization; cleanup of leftover state belongs in `[SetUp]`, not `[TearDown]`.
 - `[TearDown]` owns resource release (e.g., `Object.DontDestroyOnLoad` objects that can't be cleaned by scene reload).
 - In nested classes, only the `[SetUp]` / `[TearDown]` defined in the **same class** as the test method runs — the outer class's hooks do not run.
-- Avoid over-centralizing setup; values that affect assertion validity should stay visible inside the test method itself.
+- Avoid over-centralizing setup; values that affect assertion validity should stay visible inside the test method itself — a reader must understand the test without scrolling to `[SetUp]`; burying assertion-relevant values there makes correctness harder to judge.
 - `[LoadScene]` and `[CreateScene]` (Test Helper) run after `[OneTimeSetUp]` and before `[SetUp]`.
 
 ## Unity-Specific Rules
@@ -475,7 +475,7 @@ Follow the Spy naming convention from [Spy MonoBehaviour Conventions](#spy-monob
 [assembly: InternalsVisibleTo("MyAssembly.Tests")]
 ```
 
-- Do not use reflection to access `private` members.
+- Do not use reflection to access `private` members — reflection-based access tests implementation structure, not observable behaviour; any internal rename or refactor breaks the test without changing the contract (fragile test).
 
 ## UI Layout Testing
 

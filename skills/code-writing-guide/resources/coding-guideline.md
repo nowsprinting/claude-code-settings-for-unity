@@ -2,7 +2,7 @@
 
 ## Backward Compatibility
 
-Do NOT maintain backward compatibility unless explicitly requested. Break things boldly.
+Do NOT maintain backward compatibility unless explicitly requested. Break things boldly — backward compatibility layers accumulate over time, increasing maintenance cost and making the codebase harder to evolve.
 
 - Under `Assets/`: delete unused methods outright.
 - Under `Packages/`: for `public` members, mark them with `[Obsolete]` first to announce deprecation before removal.

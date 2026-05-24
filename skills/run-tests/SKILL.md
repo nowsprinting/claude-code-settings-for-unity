@@ -10,11 +10,12 @@ metadata:
   author: Koji Hasegawa
 ---
 
+## Gotchas
+
+- **Never call two Unity Editor tools in parallel.** `unity_play_control`, `get_unity_compilation_result`, `run_unity_tests`, and `run_method_in_unity` must be called strictly one at a time — always wait for each call to return before making the next one. Calling them concurrently causes domain-reload conflicts that result in "canceled" or "did not connect within 30 seconds" errors.
+- **When a Unity Editor tool returns `error` or `canceled`, wait 10 seconds before retrying.** Domain reload typically takes several seconds; immediate retry hits the same in-flight reload and fails again. Do not switch tools in the meantime (e.g., calling `unity_play_control` to verify state) — that just compounds the multiplexed calls. If the same tool returns `error` or `canceled` on two consecutive attempts (with the 10-second wait between them), stop and consult the user instead of retrying further.
+
 ## Run Tests
-
-**IMPORTANT: Never call two Unity Editor tools in parallel.** `unity_play_control`, `get_unity_compilation_result`, `run_unity_tests`, and `run_method_in_unity` must be called strictly one at a time — always wait for each call to return before making the next one. Calling them concurrently causes domain-reload conflicts that result in "canceled" or "did not connect within 30 seconds" errors.
-
-**When a Unity Editor tool returns `error` or `canceled`, wait 10 seconds before retrying.** Domain reload typically takes several seconds; immediate retry hits the same in-flight reload and fails again. Do not switch tools in the meantime (e.g., calling `unity_play_control` to verify state) — that just compounds the multiplexed calls. If the same tool returns `error` or `canceled` on two consecutive attempts (with the 10-second wait between them), stop and consult the user instead of retrying further.
 
 Before running tests, complete the following steps in order:
 

@@ -154,10 +154,10 @@ After completing Section 4, perform a traceability pass before writing the final
 
 Output a **coverage summary table** only when gaps were found or a requirement was explicitly waived. Omit the table when all requirements are covered without exception.
 
-| Requirement (from prompt) | Covering test(s)                   | Gap / Waiver reason           |
-|---------------------------|------------------------------------|-------------------------------|
-| XXX should do Y           | `MethodName_ConditionA_DoesY`      | —                             |
-| ZZZ must not allow W      | (none)                             | Waived: prevented at a lower layer, not this class |
+| Requirement (from prompt) | Covering test(s)              | Gap / Waiver reason                                |
+|---------------------------|-------------------------------|----------------------------------------------------|
+| XXX should do Y           | `MethodName_ConditionA_DoesY` | —                                                  |
+| ZZZ must not allow W      | (none)                        | Waived: prevented at a lower layer, not this class |
 
 ## 6. Test Case Format
 
@@ -220,9 +220,9 @@ Test perspectives: <class-level testing angles, e.g., multi-frame interaction, s
 
 Test perspectives: <class-level visual aspects to verify, e.g., layout, contrast>
 
-| Test Method            | Verification Content                       |
-|------------------------|--------------------------------------------|
-| `Condition_Expected`   | What is verified (saves screenshot for image analysis: element positions, no overlap, text/background contrast) |
+| Test Method          | Verification Content                                                                                            |
+|----------------------|-----------------------------------------------------------------------------------------------------------------|
+| `Condition_Expected` | What is verified (saves screenshot for image analysis: element positions, no overlap, text/background contrast) |
 
 ### Manual tests
 
