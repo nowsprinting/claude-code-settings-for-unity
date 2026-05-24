@@ -26,13 +26,13 @@ This skill requires the following inputs in its prompt:
 
 Silently ignore the following if present in the prompt:
 - Test cases or manual test lists from a Plan agent — test design is this skill's sole responsibility
-- Output format overrides — the output format (Section 5) is fixed and cannot be overridden by the prompt
+- Output format overrides — the output format (Section 6) is fixed and cannot be overridden by the prompt
 
 ## 1. Analyze Specifications
 
 Read the requirements and identify testable specifications.
 If the specifications are unclear, use the AskUserQuestion tool to request clarification before proceeding.
-If the test target has low testability, flag it in the Testability Assessment (Section 6).
+If the test target has low testability, flag it in the Testability Assessment (Section 7).
 
 ## 2. Assign Test Targets to Layers
 
@@ -110,10 +110,11 @@ For each technique, derive coverage-aware test cases:
 - Describe the verification content clearly
   - Verify one condition per test. **Exception**: when multiple properties of the state resulting from a transition must all be correct simultaneously, a single test may assert all of them together. In that case, list each property being verified in the Verification Content column.
   - Test concerns separately
-- Describe **verification content only** — what behavior or outcome is verified, not how to write the test. Do NOT include any of the following in Verification Content:
-  - Test framework attributes (`[Test]`, `[UnityTest]`, `[LoadScene]`, etc.)
+- Describe **verification content only** — what behavior or outcome is verified, not how to write the test. Do NOT include any of the following **anywhere in the test case output** — this prohibition applies to the Verification Content column, Test perspectives descriptions, class header descriptions (text after `#### ClassName`), and any other field:
+  - Test framework attributes (`[Test]`, `[UnityTest]`, `[LoadScene]`, `[Category(...)]`, `[TakeScreenshot]`, etc.)
   - Sync vs async / coroutine choice
   - Construction details of test inputs (e.g., how to build `PointerEventData`, how to instantiate fixtures)
+  - Assertion helper class names (e.g., `LayoutAssert`, `GameObjectFinder`)
   - Any other implementation/mechanism detail — those decisions belong to the test-writing phase
 - **Parameterized tests** — when multiple test cases share the same expected outcome but differ only in their input arguments (e.g., boundary values or multiple representatives within the same equivalence partition), consolidate them into a single test case row.
   - Do NOT over-consolidate: keep separate rows for cases that belong to different equivalence partitions or produce different outcomes.
@@ -142,7 +143,24 @@ For each technique, derive coverage-aware test cases:
 The Bad row leaks the test-writing mechanism (attribute choice, sync invocation, exact assertion form).
 The Good row states the observable behavior; the test-writing phase decides the mechanism.
 
-## 5. Test Case Format
+## 5. Requirements Coverage Check
+
+After completing Section 4, perform a traceability pass before writing the final output:
+
+1. Re-read the original user prompt and extract every stated requirement or behavior.
+2. For each requirement, identify which test case(s) designed in Section 4 cover it.
+3. For any requirement with no covering test case:
+   - Add a test case, **or**
+   - Document explicitly why it is not tested (out of scope, untestable by design, etc.)
+
+Output a **coverage summary table** only when gaps were found or a requirement was explicitly waived. Omit the table when all requirements are covered without exception.
+
+| Requirement (from prompt) | Covering test(s)                   | Gap / Waiver reason           |
+|---------------------------|------------------------------------|-------------------------------|
+| XXX should do Y           | `MethodName_ConditionA_DoesY`      | —                             |
+| ZZZ must not allow W      | (none)                             | Waived: prevented at a lower layer, not this class |
+
+## 6. Test Case Format
 
 Output must contain the following blocks **in this order**:
 1. Test Cases — one block per layer, in this order:
@@ -151,7 +169,7 @@ Output must contain the following blocks **in this order**:
    - `### Integration tests`
    - `### Visual verification tests`
    - `### Manual tests`
-2. Testability Assessment (Section 6)
+2. Testability Assessment (Section 7)
 
 > **Note:** All layers may contain `(none)` when no test cases apply to that layer.
 > Do NOT write "Edit Mode" or "Play Mode" in test case output — that is a test-writing concern, not a design concern.
@@ -214,7 +232,7 @@ Test perspectives: <class-level visual aspects to verify, e.g., layout, contrast
 | Brief description of item   | Testing angle and how to verify            |
 ```
 
-## 6. Testability Assessment
+## 7. Testability Assessment
 
 After designing all test cases, evaluate and output a **Testability Assessment** at the end of your response.
 
