@@ -75,7 +75,7 @@ After Phase 2, launch the `test-designer` agent using the following prompt struc
 - **Do NOT add output format specifications.** The `test-designer` agent's output format is self-contained; caller-supplied format overrides produce non-standard output.
 
 The `test-designer` agent returns:
-- Test cases across all layers (Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests) — ready to paste into the plan file as one block
+- **Test Cases** across all layers (Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests) — ready to paste into the plan file as one block
 - **Testability Assessment** (`TESTABILITY: PASS`, `WARN`, or `FAIL`)
 
 #### Handling the Testability Assessment
@@ -113,7 +113,7 @@ Assemble the plan file with the following sections:
 
 1. **Context** — why this change is needed
 2. **Implementation Design** — from Phase 2 Plan agent output
-3. **Test Cases** — pasted as one block from the `test-designer` agent output (all 5 layers: Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests). **When transcribing, rewrite any mechanism-leaking descriptions to verification content only.** Test framework attributes (`[Test]` / `[UnityTest]` / `[LoadScene]`, etc.) and async/coroutine patterns are decided in the test-writing phase, not in the plan.
+3. **Test Cases** — pasted verbatim as one block from the `test-designer` agent output (all 5 layers: Editor tests, Unit tests, Integration tests, Visual verification tests, Manual tests). Do NOT rewrite, translate, or clean up the output — the `test-designer` agent already enforces the content restrictions defined in `test-designing-guide` (no framework attributes, no async/coroutine patterns, no rationale text, etc.).
 4. **Known Trade-offs** — from `TESTABILITY: WARN` issues (if any)
 5. **Development Workflow** — paste the **Template** from `## Development Workflow` verbatim as the body of this section in the plan file, then add any project-specific steps per `CLAUDE.md`
 

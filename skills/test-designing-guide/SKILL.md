@@ -108,25 +108,26 @@ For each technique, derive coverage-aware test cases:
   - **Editor tests / Unit tests**: `MethodName_Condition_ExpectedResult` — the test target is a method, so include the method name.
   - **Integration tests / Visual verification tests**: `Condition_ExpectedResult` — the test target is NOT a single method (it is a multi-component interaction or an on-screen rendering), so do NOT include a method name.
 - Do NOT create sequential IDs in test case names
-- Describe the verification content clearly
-  - Verify one condition per test. **Exception**: when multiple properties of the state resulting from a transition must all be correct simultaneously, a single test may assert all of them together. In that case, list each property being verified in the Verification Content column.
+- Describe the verification clearly
+  - Verify one condition per test. **Exception**: when multiple properties of the state resulting from a transition must all be correct simultaneously, a single test may assert all of them together. In that case, list each property being verified in the Verification column.
   - Test concerns separately
-- Describe **verification content only** — what behavior or outcome is verified, not how to write the test. Do NOT include any of the following **anywhere in the test case output** — this prohibition applies to the Verification Content column, Test perspectives descriptions, class header descriptions (text after `#### ClassName`), and any other field:
+- In the **Verification** column, state exactly **which observable property** is checked and **what its expected value or state** is — this corresponds to the `Expected` segment of the test method name. Describe observable behavior only; do NOT include any of the following **anywhere in the test case output** — this prohibition applies to the Verification column, Test perspectives descriptions, class header descriptions (text after `#### ClassName`), and any other field:
   - Test framework attributes (`[Test]`, `[UnityTest]`, `[LoadScene]`, `[Category(...)]`, `[TakeScreenshot]`, etc.)
   - Sync vs async / coroutine choice
   - Construction details of test inputs (e.g., how to build `PointerEventData`, how to instantiate fixtures)
   - Assertion helper class names (e.g., `LayoutAssert`, `GameObjectFinder`)
+  - Rationale or intent text — why the test exists, what it proves about the design, or what the current (buggy) behavior is. Observable behavior only.
   - Any other implementation/mechanism detail — those decisions belong to the test-writing phase
-- **Parameterized tests** — when multiple test cases share the same expected outcome but differ only in their input arguments (e.g., boundary values or multiple representatives within the same equivalence partition), consolidate them into a single test case row.
+- **Parameterized tests** — when multiple test cases share the same expected outcome but differ only in their input arguments (e.g., boundary values within the same equivalence partition), consolidate them into a single test case row.
   - Do NOT over-consolidate: keep separate rows for cases that belong to different equivalence partitions or produce different outcomes.
-  - In the Verification Content column, indicate that multiple argument patterns are tested. Do NOT specify the framework mechanism (`TestCase`, `Values`, etc.) — that's a test-writing decision.
-  - Example: `Add_TwoIntegers_ReturnsSum` | `加算結果が引数の和になる（複数の引数パターンを検証）`
-- If a test case requires a test double, state it in the Verification Content column: e.g., `(uses spy: <TargetDependency>)`. Choose the type based on xUnit Test Patterns (xUTP) definitions:
-  - **Stub** — returns canned responses to isolate the SUT from a dependency
-  - **Spy** — records interactions (calls, arguments) for later verification
-  - **Fake** — a simplified but working implementation of a dependency
-- **Reproduction test marker** — when a test case is designed to reproduce a reported bug (see Section 3, Reproduction and regression tests), append `(reproduction test)` to the Verification Content column.
-- For visual verifications (e.g., on-screen rendering, UI layout), save a screenshot during test execution and verify it via image analysis. Note this in the Verification Content column along with the specific visual aspects to verify — e.g., `(saves screenshot for image analysis: element positions within screen, no overlap between elements, correct visibility state, text/background contrast)`.
+  - In the **Test Method column**, list the parameter values being tested after the method name. Do NOT specify the framework mechanism (`TestCase`, `Values`, etc.) — that's a test-writing decision.
+  - Example: `Add_TwoIntegers_ReturnsSum` (a: 0, 1, -1. b: 0, 1, 1) | `加算結果が引数の和になる`
+- If a test case uses a **spy** to verify interactions, note it in the Verification column: e.g., `(uses spy: <TargetDependency>)`. Do NOT note stubs or fakes — those are arrange/action concerns. xUTP definitions for reference:
+  - **Stub** — returns canned responses to isolate the SUT from a dependency. Arrange/action concern; do NOT mention in Verification.
+  - **Spy** — records interactions (calls, arguments) for later verification. Note it in Verification.
+  - **Fake** — a simplified but working implementation of a dependency. Arrange/action concern; do NOT mention in Verification.
+- **Reproduction test marker** — when a test case is designed to reproduce a reported bug (see Section 3, Reproduction and regression tests), append `(reproduction test)` to the **Test Method column** (after the method name), not the Verification column.
+- For visual verifications (e.g., on-screen rendering, UI layout), save a screenshot during test execution and verify it via image analysis. Note this in the Verification column along with the specific visual aspects to verify — e.g., `(saves screenshot for image analysis: element positions within screen, no overlap between elements, correct visibility state, text/background contrast)`.
   - **NEVER create a dedicated visual verification test class** — add visual verification test methods to the *same test class* as the functional tests.
   - **Screenshot resolution**: By default, do not fix a specific resolution for screenshot tests — let them run at whatever resolution the test environment provides. Only fix a resolution when the test condition explicitly depends on it (e.g., verifying element positions at a stated viewport size).
   - **Resolution as test condition**: When a screenshot test targets a specific resolution as part of its verification (e.g., layout at 960×540), include the resolution in the `<Condition>` segment of the test method name — e.g., `At960x540_RendersVersionLabelAtBottomRight` (visual verification tests use `Condition_ExpectedResult`, with no method name). This makes each resolution a distinct, independently runnable test case.
@@ -134,15 +135,21 @@ For each technique, derive coverage-aware test cases:
     - Element positions within screen, no overlap between elements, correct visibility state
     - **Text/background contrast** — verify that text color has sufficient contrast against its background so text is clearly legible
 
-### Example: Verification Content — Bad vs. Good
+### Example: Verification — Bad vs. Good
 
-| Style | Verification Content                                                                                 |
-|-------|------------------------------------------------------------------------------------------------------|
-| Bad   | Call `OnBeginDrag` synchronously with `[Test]` and Assert that `CanvasGroup.blocksRaycasts == false` |
-| Good  | `CanvasGroup.blocksRaycasts` is disabled when drag starts                                            |
+| Style               | Test Method                                              | Verification                                                                                         |
+|---------------------|----------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| Bad (mechanism)     | `OnBeginDrag_WhenDragStarts_BlocksRaycastsIsDisabled`    | Call `OnBeginDrag` synchronously with `[Test]` and Assert that `CanvasGroup.blocksRaycasts == false` |
+| Good                | `OnBeginDrag_WhenDragStarts_BlocksRaycastsIsDisabled`    | `CanvasGroup.blocksRaycasts` is disabled when drag starts                                            |
+| Bad (rationale)     | `StartRun_SameSeed_ProducesSameMap`                      | 同一シードで 2 回ランを開始したときマップ構造が再現されること。RNG が holder に格納されない現状では失敗する（BUG 1 の再現テスト）                          |
+| Good                | `StartRun_SameSeed_ProducesSameMap` (reproduction test)  | 同一シードで 2 回ランを開始したときマップ構造が一致する                                                                        |
+| Bad (parameterized) | `Sync_GivenPhase_PanelVisible`                           | Defeat フェーズのときのみパネルが表示される（複数の引数パターンを検証）                                                              |
+| Good                | `Sync_GivenPhase_PanelVisible` (phase: HeroTurn, Defeat) | Defeat フェーズのときのみパネルが表示される                                                                            |
 
-The Bad row leaks the test-writing mechanism (attribute choice, sync invocation, exact assertion form).
-The Good row states the observable behavior; the test-writing phase decides the mechanism.
+The Bad (mechanism) row leaks the test-writing mechanism (attribute choice, sync invocation, exact assertion form).
+The Bad (rationale) row leaks why the test exists and what the current behavior is — none of that belongs in Verification; `(reproduction test)` goes in the Test Method column instead.
+The Bad (parameterized) row hides the concrete argument values in a vague phrase in Verification; they belong in the Test Method column as named parameters (`param: val1, val2`).
+The Good rows state the observable behavior only; all other concerns go in the Test Method column or the test-writing phase.
 
 ## 5. Requirements Coverage Check
 
@@ -179,7 +186,7 @@ Output must contain the following blocks **in this order**:
 Structure by layer:
 - **Editor tests / Unit tests**: `#### <ClassName>` → `##### <MethodName>` → Test perspectives → table
 - **Integration tests / Visual verification tests**: `#### <ClassName>` → Test perspectives → table
-- **Manual tests**: no class/method section; uses a table of test cases with "Test perspectives / Verification method" column instead of "Verification Content"
+- **Manual tests**: no class/method section; uses a table of test cases with "Test perspectives / Verification method" column instead of "Verification"
 
 ```markdown
 ### Editor tests
@@ -190,9 +197,11 @@ Structure by layer:
 
 Test perspectives: <techniques selected from Section 3, e.g., equivalence partitioning, boundary value analysis>
 
-| Test Method                 | Verification Content                       |
-|-----------------------------|--------------------------------------------|
-| `Method_Condition_Expected` | What is verified by this test              |
+| Test Method                                      | Verification                       |
+|--------------------------------------------------|--------------------------------------------|
+| `Method_Condition_Expected`                      | What is verified by this test              |
+| `Method_Condition_Expected` (reproduction test)  | What is verified by this reproduction test |
+| `Method_Condition_Expected` (param: val1, val2)  | What is verified across these param values |
 
 ### Unit tests
 
@@ -202,10 +211,10 @@ Test perspectives: <techniques selected from Section 3, e.g., equivalence partit
 
 Test perspectives: <techniques selected from Section 3>
 
-| Test Method                 | Verification Content                       |
-|-----------------------------|--------------------------------------------|
-| `Method_Condition_Expected` | What is verified by this test              |
-| `Method_Condition_Expected` | What is verified (uses stub: IDependency)  |
+| Test Method                                      | Verification                       |
+|--------------------------------------------------|--------------------------------------------|
+| `Method_Condition_Expected`                      | What is verified by this test              |
+| `Method_Condition_Expected`                      | What is verified (uses spy: IDependency)   |
 
 ### Integration tests
 
@@ -213,9 +222,9 @@ Test perspectives: <techniques selected from Section 3>
 
 Test perspectives: <class-level testing angles, e.g., multi-frame interaction, scene transition>
 
-| Test Method            | Verification Content                       |
-|------------------------|--------------------------------------------|
-| `Condition_Expected`   | What is verified by this test              |
+| Test Method                                      | Verification                       |
+|--------------------------------------------------|--------------------------------------------|
+| `Condition_Expected`                             | What is verified by this test              |
 
 ### Visual verification tests
 
@@ -223,7 +232,7 @@ Test perspectives: <class-level testing angles, e.g., multi-frame interaction, s
 
 Test perspectives: <class-level visual aspects to verify, e.g., layout, contrast>
 
-| Test Method          | Verification Content                                                                                            |
+| Test Method          | Verification                                                                                            |
 |----------------------|-----------------------------------------------------------------------------------------------------------------|
 | `Condition_Expected` | What is verified (saves screenshot for image analysis: element positions, no overlap, text/background contrast) |
 
