@@ -17,7 +17,10 @@ Guide for writing test code for Unity projects.
 
 - Before modifying any test file, check if the editor is in Play Mode. If it is, stop it using the `unity_play_control` tool first.
 - Never create `.meta` files. Unity editor creates them automatically.
-- When the test class requires a dedicated `.unity` scene file or `.prefab` (e.g., to share setup across multiple test methods via `[LoadScene]`), invoke the `edit-scene` skill to create or modify that file.
+
+### Integration Tests
+
+When implementing a test classified as an integration test, add `[Category("Integration")]` to the test method.
 
 ### UI Tests
 
@@ -58,7 +61,7 @@ When implementing a visual verification test (a test designed to verify on-scree
 1. Take a screenshot using `[TakeScreenshot]` or `ScreenshotHelper.TakeScreenshotAsync()` (see `test-helper.md`).
 2. Add `[Description("Verify the screenshots from the following perspectives: <verification aspects>")]` to the test method. The verification aspects are taken directly from the `(saves screenshot for image analysis: ...)` note in the test case design.
 3. Add `[Category("VisualVerification")]` to the test method.
-4. You do not need to write `Assert` statements.
+4. You can omit writing `Assert` statements.
 
 ## Resources
 
