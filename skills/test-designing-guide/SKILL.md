@@ -79,6 +79,8 @@ When the SUT consumes a pseudo-random number generator (`UnityEngine.Random`, `S
 
 ### Integration test perspectives
 
+Verify from the user's perspective — assert on-screen display and UI interactions as much as possible. Avoid relying on internal state or property checks when user-visible behavior can be asserted instead.
+
 When the test target is a prefab, scene, or a GameObject composed of multiple components, consider the following test perspectives:
 
 - **UI operation sequences** — click, drag, and other player operations that advance game mechanics over one or more frames
@@ -148,6 +150,7 @@ After completing Section 4, perform a traceability pass (acceptance tests covera
 
 1. Re-read the original user prompt and extract every stated requirement or behavior.
 2. For each requirement, identify which test case(s) designed in Section 4 cover it.
+   - **UI-layer requirements require UI-level acceptance tests.** When a requirement is stated at the UI layer (it describes on-screen display or a user-facing UI operation), the covering test(s) must be **integration tests or visual verification tests** that exercise actual screen display and UI operations. A unit test that only calls a method does not satisfy a UI-layer requirement. If no integration or visual verification test covers it, record it as a gap and handle it in step 3.
 3. For any requirement with no covering test case:
    - Add a test case, **or**
    - Document explicitly why it is not tested (out of scope, untestable by design, etc.)

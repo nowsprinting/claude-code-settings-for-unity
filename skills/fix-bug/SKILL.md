@@ -26,6 +26,8 @@ This skill must be used **outside plan mode**. Before doing anything else, check
 
 ### Phase 1: Clarify the Bug Report
 
+> **Do not read code files during this phase.** You may only read specs and design docs.
+
 Extract the following from the user's prompt:
 
 - **Condition**: the setup or scenario that triggers the bug
@@ -53,10 +55,11 @@ Search the project's test code for existing tests closest to the bug scenario. T
 - Placement anchor — add the reproduction test nearby
 - Style reference — follow the same test conventions
 
+**When the bug condition involves on-screen display or a user-facing UI operation**, search for **integration tests with UI operations or visual verification tests** — the reproduction test must be at that layer, so the placement anchor and style reference must be too.
+
 Use Explore agents to locate relevant test files and test cases.
 
-Load the `test-designing-guide` skill to design the reproduction test case, then load
-`test-writing-guide` to implement it. Place the reproduction test near the similar tests found above.
+Load the `test-designing-guide` skill to design the reproduction test case, then load `test-writing-guide` to implement it. Place the reproduction test near the similar tests found above.
 
 If an existing test is testing the wrong behavior (i.e., the test itself is buggy), rewrite
 that test to correctly reproduce the bug rather than adding a new one.
