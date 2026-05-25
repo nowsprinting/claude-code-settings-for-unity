@@ -17,9 +17,7 @@ Do NOT maintain backward compatibility unless explicitly requested. Break things
 
 ## Naming
 
-- Private fields use `_camelCase` (underscore prefix).
-- Static fields use `s_camelCase`.
-- Abstract class names have no prefix or suffix; implementation classes use the abstract class name as a suffix.
+- Abstract class names have no prefix (e.g., `Abstract`) or suffix (e.g., `Base`); implementation classes use the abstract class name as a suffix.
   For example, when the abstract class is `Card`, implementations are `AttackCard`, `DefenseCard`, etc.
 - Enum names use singular nouns in PascalCase. Bitwise enums marked with `[Flags]` use plural nouns instead.
 
