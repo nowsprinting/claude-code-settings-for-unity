@@ -35,12 +35,19 @@ Extract the following from the user's prompt:
 If any of the three cannot be determined from the prompt, use `AskUserQuestion` to ask
 the user before proceeding. All three must be known before moving to Phase 2.
 
+Also determine the **report type**:
+
+- **Existing test failure** — the user reports that an existing test is failing. The specific failing test method need not be known at this stage; note the scope (class name, scene name, or test assembly) from the prompt. **Phase 2 is skipped** — proceed directly to Phase 3.
+- **Behavioral bug** — the user describes unexpected runtime behavior with no mention of a failing test. Proceed normally through Phase 2.
+
 Also check the relevant documentation (specs, design docs) for consistency with the
 user's bug report. If the documentation and the report conflict, use `AskUserQuestion`
 to clarify with the user which is correct. If the docs contain errors or are missing
 relevant information, add them to the list of files to be modified in this bug fix.
 
-### Phase 2: Find Similar Tests
+### Phase 2: Write the Reproduction Test
+
+> **Skip this phase** if Phase 1 identified this as an **existing test failure** case. Proceed directly to Phase 3.
 
 Search the project's test code for existing tests closest to the bug scenario. These serve two purposes:
 - Placement anchor — add the reproduction test nearby
@@ -48,22 +55,23 @@ Search the project's test code for existing tests closest to the bug scenario. T
 
 Use Explore agents to locate relevant test files and test cases.
 
-### Phase 3: Write & Verify the Reproduction Test
-
 Load the `test-designing-guide` skill to design the reproduction test case, then load
-`test-writing-guide` to implement it.
+`test-writing-guide` to implement it. Place the reproduction test near the similar tests found above.
 
-Place the reproduction test near the similar tests found in Phase 2.
+If an existing test is testing the wrong behavior (i.e., the test itself is buggy), rewrite
+that test to correctly reproduce the bug rather than adding a new one.
 
-Run the test using the `/run-tests` skill and verify that it **fails** (the bug is reproduced).
+### Phase 3: Verify the Reproduction Test Fails
 
-#### If an existing test is incorrect
+Run tests using the `/run-tests` skill and verify that the reproduction test **fails**:
 
-If Phase 2 reveals an existing test that is testing the wrong behavior (i.e., the test
-itself is buggy), rewrite that test to correctly reproduce the bug rather than adding a
-new one.
+- **If a test was added in Phase 2**: run that specific test.
+- **If Phase 2 was skipped (existing test failure)**: narrow down the test to run using the scope identified in Phase 1 (e.g., a specific test class or assembly). If narrowing down is not possible, run all tests.
 
-#### If the test does not fail (bug not reproduced)
+If multiple tests fail and it is unclear which one corresponds to the reported bug, use
+`AskUserQuestion` to ask the user which test to focus on.
+
+#### If the test does not fail (Phase 2 path only)
 
 - Delete the reproduction test
 - Return to Phase 2 and search more broadly
@@ -71,24 +79,24 @@ new one.
 If reproduction has been attempted **3 times** without success, return to **Phase 1** and
 use `AskUserQuestion` to re-clarify the bug report with the user.
 
-### Phase 4: Diagnose & Propose Fix
+### Phase 4: Confirm Reproduction with User
 
-With the reproduction test failing, investigate the root cause:
+**Present the reproduction evidence to the user** via `AskUserQuestion` before proceeding.
+Include:
+- Reproduction test: file path and method name
+- Test failure message (actual output from the test run)
+
+Proceed to Phase 5 only after the user confirms the reproduction is as expected.
+
+### Phase 5: Diagnose & Formulate Fix
+
+With the reproduction confirmed, investigate the root cause:
 
 1. Trace through the code path triggered by the reproduction test
 2. Identify the specific line(s) or logic responsible for the bug
 3. Formulate a fix
 
-**Present the fix proposal to the user** via `AskUserQuestion` before making any changes.
-Include:
-- Root cause (one or two sentences)
-- Reproduction test: file path and method name
-- Proposed change: file, location, what changes
-- Any trade-offs or risks
-
-Proceed only after the user approves.
-
-### Phase 5: Regression Test Coverage
+### Phase 6: Regression Test Coverage
 
 Before applying the fix, check whether the affected area has adequate coverage for adjacent behavior:
 
@@ -97,16 +105,16 @@ Before applying the fix, check whether the affected area has adequate coverage f
 3. If gaps exist, add regression tests and run them — they must **pass**
    (they test existing correct behavior, not the bug itself)
 
-### Phase 6: Apply Fix & Verify
+### Phase 7: Apply Fix & Verify
 
-1. Apply the approved fix to the production code
+1. Apply the fix formulated in Phase 5 to the production code
 2. Run all affected tests using `/run-tests`
 3. Confirm:
    - The reproduction test now **passes** (bug is fixed)
    - All regression tests still **pass**
 4. Commit to git
 
-### Phase 7: Refactoring
+### Phase 8: Refactoring
 
 1. Launch a `general-purpose` subagent to check for duplicate test cases in the test files
    added or modified in this iteration (plus any existing files in the same test class).
