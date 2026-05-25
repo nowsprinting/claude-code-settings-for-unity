@@ -144,7 +144,7 @@ The Good row states the observable behavior; the test-writing phase decides the 
 
 ## 5. Requirements Coverage Check
 
-After completing Section 4, perform a traceability pass before writing the final output:
+After completing Section 4, perform a traceability pass (acceptance tests coverage check) before writing the final output:
 
 1. Re-read the original user prompt and extract every stated requirement or behavior.
 2. For each requirement, identify which test case(s) designed in Section 4 cover it.

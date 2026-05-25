@@ -8,6 +8,7 @@ description: >-
   Visual verification tests, Manual tests) and a Testability Assessment
   (TESTABILITY: PASS / WARN / FAIL). A FAIL result signals the main agent to
   loop back and re-invoke the Plan agent with the reported Testability Issues.
+tools: Bash, Read, AskUserQuestion, Skill, mcp__jetbrains__get_file_text_by_path, mcp__jetbrains__search_in_files_by_text, mcp__jetbrains__search_in_files_by_regex, mcp__jetbrains__search_symbol, mcp__jetbrains__get_symbol_info
 model: opus
 skills:
   - test-designing-guide
