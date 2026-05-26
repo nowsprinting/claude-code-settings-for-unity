@@ -141,5 +141,4 @@ Before applying the fix, check whether the affected area has adequate coverage f
    correction. If the finding is a **bug**, write a reproduction test first, run it with
    `/run-tests` to confirm it **fails**, then fix the bug.
 5. Re-run tests using `/run-tests` command to confirm they still pass.
-6. Reformat the modified files, using `reformat_file` tool.
-7. Commit to git.
+6. Commit to git.

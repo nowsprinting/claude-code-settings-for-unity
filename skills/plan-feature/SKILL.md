@@ -153,7 +153,6 @@ Paste the **Template** below verbatim as the body of the `## Development Workflo
 - [ ] Run tests with `/run-tests` and confirm **all pass**
 - [ ] Run `/code-review ${CLAUDE_EFFORT}` and apply findings (for bug findings: write a reproduction test, confirm it **fails**, then fix)
 - [ ] Run tests with `/run-tests` and confirm **all pass**
-- [ ] Reformat modified files with `reformat_file`
 - [ ] Commit to git
 ```
 
