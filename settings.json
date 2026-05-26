@@ -124,6 +124,7 @@
     "additionalDirectories": []
   },
   "enabledPlugins": {
-    "csharp-lsp@claude-plugins-official": true
+    "csharp-lsp@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true
   }
 }
