@@ -1,5 +1,8 @@
 # Example settings and skills for developing Unity projects with Claude Code
 
+> [!WARNING]  
+> The Agent skills previously published in this repository will now be managed at https://github.com/nowsprinting/unity-coding-skills.
+
 ## Usage
 
 When creating an implementation plan in plan mode, the `plan-feature` skill produces a lean, maintainable test design and a test-first workflow, enabling Claude Code to implement and verify autonomously.
